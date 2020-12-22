@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  mysqldb:
+    image: mysql:8.0.20
+    container_name: mysql_grillo
+    environment:
+      MYSQL_DATABASE: developer
+      #MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: developer      
+    ports:
+      - "3306:3306"
+    networks: 
+      - lomis 
+
+networks:
+  lomis:
+    driver: bridge
+
+
