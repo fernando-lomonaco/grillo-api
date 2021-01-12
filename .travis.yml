@@ -17,7 +17,6 @@ addons:
 stages:
   - name: Test    
   - name: Sonar
-    if: branch = master
   - name: Build docker image
     if: branch = master
   - name: Deploy
