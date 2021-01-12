@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.4.RELEASE</version>
+		<version>2.4.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.grillo</groupId>
@@ -15,13 +15,15 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<spring-cloud.version>Hoxton.SR5</spring-cloud.version>
+		<spring-cloud.version>2020.0.0</spring-cloud.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<springboot-tc-starter.version>1.73</springboot-tc-starter.version>
-		<springdoc.version>1.4.3</springdoc.version>
-		<modelmapper.version>2.3.8</modelmapper.version>
+		<springboot-tc-starter.version>1.86</springboot-tc-starter.version>
+		<springdoc.version>1.5.2</springdoc.version>
+		<modelmapper.version>2.3.9</modelmapper.version>
 		<jib-maven-plugin.version>2.4.0</jib-maven-plugin.version>
+		<docker.image.prefix>fernandolomonaco</docker.image.prefix>
+		<full-artifact-name>target/${project.artifactId}-${project.version}.jar</full-artifact-name>
 	</properties>
 
 	<dependencies>
@@ -36,10 +38,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -132,7 +130,7 @@
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
-			<version>6.4</version>
+			<version>6.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -155,12 +153,6 @@
 			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>com.twilio.sdk</groupId>
-			<artifactId>twilio</artifactId>
-			<version>7.55.1</version>
-		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -172,15 +164,14 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>com.google.cloud.tools</groupId>
 						<artifactId>jib-maven-plugin</artifactId>
+						<groupId>com.google.cloud.tools</groupId>
 						<version>${jib-maven-plugin.version}</version>
 						<configuration>
 							<to>
-								<image>fernandolomonaco/${project.name}</image>
+								<image>${docker.image.prefix}/${project.artifactId}</image>
 								<tags>
 									<tag>${project.version}</tag>
-									<tag>latest</tag>
 								</tags>
 							</to>
 						</configuration>
@@ -199,17 +190,8 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
-			<!-- <dependency>
-				<groupId>org.keycloak.bom</groupId>
-				<artifactId>keycloak-adapter-bom</artifactId>
-				<version>${keycloak.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency> -->
 		</dependencies>
 	</dependencyManagement>
-
 
 	<build>
 		<plugins>
@@ -218,12 +200,11 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-
 			<!-- jacoco-maven-plugin useful for Codecov -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.2</version>
+				<version>0.8.6</version>
 				<executions>
 					<execution>
 						<goals>
@@ -244,12 +225,12 @@
 			<plugin>
 				<groupId>com.heroku.sdk</groupId>
 				<artifactId>heroku-maven-plugin</artifactId>
-				<version>3.0.2</version>
+				<version>3.0.4</version>
 				<configuration>
 					<appName>${project.artifactId}</appName>
 					<processTypes>
 						<web>java $JAVA_OPTS -jar -Dserver.port=$PORT ${full-artifact-name}
-							--spring.profiles.active=heroku
+							--spring.config.location=classpath:file:/config/heroku/
                         </web>
 					</processTypes>
 				</configuration>
