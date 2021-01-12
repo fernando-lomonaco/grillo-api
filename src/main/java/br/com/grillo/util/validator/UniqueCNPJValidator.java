@@ -1,7 +1,6 @@
 package br.com.grillo.util.validator;
 
 import br.com.grillo.service.PartnerService;
-import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;

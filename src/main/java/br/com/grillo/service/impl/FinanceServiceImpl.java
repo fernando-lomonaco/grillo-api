@@ -3,9 +3,6 @@ package br.com.grillo.service.impl;
 import br.com.grillo.model.entity.Finance;
 import br.com.grillo.repository.FinanceRepository;
 import br.com.grillo.service.FinanceService;
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -21,9 +18,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FinanceServiceImpl implements FinanceService {
-
-    public static final String ACCOUNT_SID = "AC3432392372c5f273af787ab4160f8e63";
-    public static final String AUTH_TOKEN = "0408007d133148899007706280c13839";
 
     private final FinanceRepository repository;
 
@@ -54,15 +48,7 @@ public class FinanceServiceImpl implements FinanceService {
     @Override
     @CacheEvict(value = {"finances", "financesByProductOrPartner"}, allEntries = true)
     public Finance save(final Finance financeRequest) {
-        Finance finance = repository.save(financeRequest);
-
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-
-        Message message = Message.creator(
-                new PhoneNumber("+5511995316886"), new PhoneNumber("+12674582631"),
-                "Informações Financeira\n" + " Tipo de Finanças: " + finance.getFinanceType() + "\n Produto: " + finance.getProduct()).create();
-
-        return finance;
+        return repository.save(financeRequest);
     }
 
     @Override
