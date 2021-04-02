@@ -13,7 +13,7 @@ addons:
 stages:
 - name: Unit Tests
 - name: Static Analysis
-  if: (branch = main) AND (branch = "$TRAVIS_BRANCH")
+  if: branch = main AND branch = "$TRAVIS_BRANCH"
 - name: Build docker image
 - name: Deploy
   if: branch = main
