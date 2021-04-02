@@ -12,7 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.grillo.model.entity.User;
+import br.com.grillo.model.entity.Auth;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -38,17 +38,17 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles()
+    public static UserDetailsImpl build(Auth auth) {
+        List<GrantedAuthority> authorities = auth.getRoles()
             .stream()
             .map(role -> new SimpleGrantedAuthority(role.getName().name()))
             .collect(Collectors.toList());
 
         return new UserDetailsImpl(
-                user.getCode(),
-                user.getUsername(), 
-                user.getEmail(),
-                user.getPassword(),
+                auth.getCode(),
+                auth.getUsername(),
+                auth.getEmail(),
+                auth.getPassword(),
                 authorities);
     }
 
