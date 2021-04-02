@@ -18,8 +18,9 @@ stages:
 - name: Deploy
   if: branch = main
 before_install:
-- echo "Iniciando Stage Publicação - $TRAVIS_BRANCH"
 - chmod +x mvnw
+- echo "Iniciando Stage Publicação - $TRAVIS_BRANCH"
+
 jobs:
   include:
   - stage: Unit Tests

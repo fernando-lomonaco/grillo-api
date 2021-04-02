@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>br.com.grillo</groupId>
 	<artifactId>grillo</artifactId>
-	<version>1.0.0</version>
+	<version>0.0.2</version>
 	<name>grillo-api</name>
 	<description>Grillo API</description>
 
