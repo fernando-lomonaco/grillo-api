@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.ParseException;
+import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,6 +42,7 @@ class CategoryControllerTest {
     static final String STATUS = "A";
     static final String TRANSACTION_DATE = "2020-08-21T18:32:04.150";
     static final String URL = "/categories";
+    static final String EXTERNAL_CODE = "05ae9332-394f-4d6a-8823-2245f6d52bce";
 
     private HttpHeaders headers;
 
@@ -95,6 +97,7 @@ class CategoryControllerTest {
                         (TRANSACTION_DATE.concat("Z")))
                 .updatedDate(DateUtils.getLocalDateTimeFromString
                         (TRANSACTION_DATE.concat("Z")))
+                .externalCode(UUID.fromString(EXTERNAL_CODE))
                 .build();
 
         mockMvc.perform(post(URL).content(getJsonPayload(category))
@@ -117,6 +120,7 @@ class CategoryControllerTest {
                         (TRANSACTION_DATE.concat("Z")))
                 .updatedDate(DateUtils.getLocalDateTimeFromString
                         (TRANSACTION_DATE.concat("Z")))
+                .externalCode(UUID.fromString(EXTERNAL_CODE))
                 .build();
 
     }

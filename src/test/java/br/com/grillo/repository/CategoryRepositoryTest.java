@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -25,6 +26,7 @@ class CategoryRepositoryTest {
     static final String STATUS = "A";
     static final String TRANSACTION_DATE = "2020-08-21T18:32:04.150";
     static final String URL = "/categories";
+    static final String EXTERNAL_CODE = "05ae9332-394f-4d6a-8823-2245f6d52bce";
 
     @Autowired
     private CategoryRepository repository;
@@ -43,6 +45,7 @@ class CategoryRepositoryTest {
                         (TRANSACTION_DATE.concat("Z")))
                 .updatedDate(DateUtils.getLocalDateTimeFromString
                         (TRANSACTION_DATE.concat("Z")))
+                .externalCode(UUID.fromString(EXTERNAL_CODE))
                 .build();
 
         Category response = repository.save(category);
