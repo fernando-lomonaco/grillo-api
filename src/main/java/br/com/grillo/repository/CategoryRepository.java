@@ -1,7 +1,5 @@
 package br.com.grillo.repository;
 
-import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -12,7 +10,7 @@ import br.com.grillo.model.entity.Category;
 
 @Repository
 @Transactional(readOnly = true)
-public interface CategoryRepository extends PagingAndSortingRepository<Category, UUID> {
+public interface CategoryRepository extends PagingAndSortingRepository<Category, Long> {
 
     Page<Category> findByStatus(char status, Pageable pageable);
 

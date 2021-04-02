@@ -1,7 +1,5 @@
 package br.com.grillo.repository;
 
-import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -12,8 +10,8 @@ import br.com.grillo.model.entity.Finance;
 
 @Repository
 @Transactional(readOnly = true)
-public interface FinanceRepository extends PagingAndSortingRepository<Finance, UUID> {
+public interface FinanceRepository extends PagingAndSortingRepository<Finance, Long> {
 
-    Page<Finance> findByProductCode(UUID product, Pageable pageable);
+    Page<Finance> findByProductCode(Long productCode, Pageable pageable);
 
 }
