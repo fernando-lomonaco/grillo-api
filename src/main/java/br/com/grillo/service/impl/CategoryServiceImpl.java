@@ -34,8 +34,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Cacheable(value = "categoryId", key = "#code", unless = "#result==null")
-    public Optional<Category> get(final String code) {
-        return repository.findById(UUID.fromString(code));
+    public Optional<Category> get(final Long code) {
+        return repository.findById(code);
     }
 
     @Override
@@ -45,15 +45,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Caching(evict = @CacheEvict(value = {"categories"}, allEntries = true), put = @CachePut(value = "categoryId", key = "#code"))
-    public Category update(final Category categoryRequest, final String code) {
-        categoryRequest.setCode(UUID.fromString(code));
+    @Caching(put = @CachePut(value = "categoryId", key = "#code"),
+            evict = @CacheEvict(value = {"categories"}, allEntries = true))
+    public Category update(final Category categoryRequest, final Long code) {
+        categoryRequest.setCode(code);
         return repository.save(categoryRequest);
     }
 
     @Override
     @CacheEvict(value = {"categories", "categoryId"}, allEntries = true)
-    public void delete(final String code) {
-        repository.deleteById(UUID.fromString(code));
+    public void delete(final Long code) {
+        repository.deleteById(code);
     }
 }

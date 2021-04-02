@@ -1,81 +1,86 @@
+dist: trusty
 language: java
 jdk: openjdk11
-
 cache:
   directories:
   - "$HOME/.m2"
-
 services:
 - docker
-
 addons:
   sonarcloud:
     organization: grillo-api
     token:
-      secure: UE3V0+wjBbhkAQx4tf//azIx0GEE8Nqap6oxO3hIuWL1LdX+/eAEAABTWqeVQEz+uvOG8qcRGCJSS0NQeuUbXkW8WZvTduR/fTBmMfd36bUis2XR1c7akXyY5TF8L2ANGLCplBL4vAwnCBwSL8T8miMsGiQjYOXKV290DeWsYRUD9FcZt9c0s8/VU5BXjm+LVUgrC6I8Xj5XYWo8BL+zPZCX57l6UTDkf9E/UNFdsNRYhxXGqz8zC2y0vhx0vc11vbSRdtwCi+gIAgfHWQ1ucyK4mPXSEOledejhBAXkjWthfWaML3CkWHIbkMWZg8V8MjOUZwJT+XfITIM8yb79GWYz5qtjilBh4vWff8A9r1uSuwmcDYh/eg+bb2+4Zmfqk7DIFKRK3mgT4xCtJ/KQiUvj0wEuygCpvDCyI71ur/Omt3NfeS3oMo9IdaTAjzSGk8cwPzXUNEt4xAHHAVcTfiOlUrHae9O09XNYcIxQW3STlqvQoMKLAryx5bLznO2ihWCKgi0+tJ/FKcG+SWFvpcrmSHdXsfjMVtibPXesxRa6LEO/78gVcmaNaFCwf3/HwoULOlgJpzcle9dR6io9eiozH6XUQ16kJM3FR6UctAooEst/AEGpMA0mBa1cUVbjEuzUlKpr0Gf3ZDUsRSePK/7eDA6GdKkJbl8wctZMQfs=
-
+      secure: e4lBUlGak6y7L+mYYIH9VvdulpjPWXmmx+RS17vEKwmjRr+kzKbdZEgkXU3QxNg7X2R2CyQ1UCr45wqRnJandkvW0jhg9EmwvLQsK3/V2DeJIyMHF7mpxNJPrG8YiOJXcIFkM2yBIfhshCfWGfeO8hlX+N0AAAIiPrPtzRU5I+9R0LXAGSAXJwYTmLM6yjNYB3ZZIvq4qi+F5O/kkGS+PxoWWE3+djNrVO6SZh6/D61WridwEnSrsbg/aacdJyo57vNvPW5AT2fwpy2xg6GtCVw1LDPZ8Y7JDub12F/UQnTKXTXZh3OYb17LuY62jTUpc8LGyaQJjGxIsmMluUMYAROiDVVaElU8ROSfEb5HxCnlu6Ogn2qqsmXCNVDMdTpvRqaAxeyrfxUm5LU3fngwEasivNB8D38UaNNzAPQJLc4aycp74T4brTBrwFBLzePv9/4kMyQ+se4LNNyDuCP0+KYjhBmlZZDRRcjuPnNtIa9wtRSZx80ignu0DBlKv4lftZfOyKkBd6S2sOXVgIE3oaJmb9I8ICbTpz8XUWx1xkGTkOZR0REUGExYAGRWFBRPu9zly+53kaXGamGmQS8wNhpor5b5mGczqU9B0WtWl0QE07f39FbHySPjYUNN1SI34jiYjw/vAtORGpzNQTSPqOQqRl28erhrcw9jKbKIJL4=
 stages:
-  - name: Test    
-  - name: Sonar
-    if: branch = master
-  - name: Build docker image
-    if: branch = master
-  - name: Deploy
-    if: branch = master
-
+- name: Init
+- name: Uni Tests
+- name: Static Analysis
+- name: Build docker image
+- name: Deploy
 before_install:
-  - chmod +x mvnw
-
+- chmod +x mvnw
 jobs:
   include:
-    - stage: Test
-      script:
-      - ./mvnw clean install
-
-    - stage: Sonar
-      script:
-      - bash <(curl -s https://codecov.io/bash)
-      - ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=fernando-lomonaco_grillo-api
-
-    - stage: Build docker image
-      script:
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - echo "Building docker image"
-      - docker pull adoptopenjdk/openjdk11:alpine-jre
-      - ./mvnw deploy jib:build -P deploy-docker
-
-    - stage: Deploy
-      script:
-      - echo "Deploying on Heroku"
-      deploy:
-        provider: heroku
-        api_key:
-          secure: NbeelFFE+QwKg+dJ+WTRWhT3pXYroPw9YJdzCpYlvWvMc/SLyo0MNSZ7dJihtGKc+5MQ1CH/17L/VYcgEa0/wPoftFHD8zfaqjK0mEyjkRZ/cI+u5IuK3uoFkuq3fthapwO7KG61H1DPcCrkElcM83xACupPBXa47WpaOjx8y3g4tevyzfjoU++6zIUb5TYDhS3b9q3ZggQKofu2+ulgpl0ipBsuEo+mUHTa3pkm7acMd2gYuKtV5xiJSsnZ6w6tQEGKL+wdCDjW0xnYXsQ4quAg/Vjwgyx6GQ3Eb+at/1UEZHsrYTgvHgveSlN/u4RhkDt9E62O6o08oco8QExUn95M0rATH3rwliYLnhx7+4N4p5zMYaPlSGmhoUoB9Hu1KePros6n3IAeT5+DkpWvlJQ+P/Sf0wFYaKZRR8B90jeybUsAHWn8O/NhOSFoW5KaktHdD1Ton5aaY2b0rpvKHu7/zGd3oqId8/On1duq8FkYdAF1ojYoCjAMuGyUh6ICMnl5jTi6REUyF2Cy2Aq03kJwC+Q/c7jD4SN0E3eydTpEIWU38ebF9kvFHqaz8m0Kn0BBvfyz9yVAdGxToGXXr+D5BxjilYWHa3l3JYGncjWLZl+2P9rDpH6NxNX6fYJSMgX5EvHOi4AQCUNbt0d/AeT9WCjEpGZYQrmaWz35RHA=
-        app: grillo-api
-
+  - stage: Init
+    script:
+    - echo "##################### INIT - $TRAVIS_REPO_SLUG"
+    - echo "BRANCH - $TRAVIS_BRANCH"
+    - echo "COMMIT - $TRAVIS_COMMIT"
+    - echo "TAG - $TRAVIS_TAG"
+    - echo $TRAVIS_BUILD_NUMBER
+  - stage: Uni Tests
+    name: "Unit Tests"
+    script:
+    - echo "##################### Executing Unit Test"
+    - "./mvnw test"
+  - stage: Static Analysis
+    script:
+    - echo "##################### Executing Sonar"
+    - bash <(curl -s https://codecov.io/bash)
+    - "./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+      -Dsonar.projectKey=fernando-lomonaco_grillo-api"
+  - stage: Build docker image
+    if: branch = main
+    script:
+    - echo "##################### Building docker image"
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker pull adoptopenjdk/openjdk11:alpine-jre
+    - "./mvnw deploy jib:build -P deploy-docker -DskipTests"
+  - stage: Deploy
+    if: branch = main
+    script:
+    - echo "##################### Preparando deploy"
+    deploy:
+      provider: heroku
+      api_key:
+        secure: my9WwA1y8GMLR/L1RqR1/+PTtdpbH7PENI14Ba/PXC6pLY3NccWtXNZhIolQs27f1CWw4vTpTPu2Gcd68jQatR17dNV7yZYs9O2sXHOGl/MyKIOYo5goywhWzQ3Jpo83n0akOb7raJwlXQwQeMUIfiiHLWbDvVh9+bE6QCDi9qk7YD5brj+ZczyqTsjwJDKAeujfMnwHV8zDU7mHWD8EPwTmIa2YDtIun3bxVh0yvTyPjHCIEyUwCjQhKxXT/vLw55qcdO5e3r+wXQDmtOPlGSGX4cWF43rStxJowFNJh6Uhi/WpUDhzHBIU+VBD/vpOCO+5u944o+GsSKoIj92NuZ6GEbb6VhGEA0q88398r9PMx6l+IoNxaew/u1Ry8y7rNSNlr1xPTt86faYnLcYQeyPvMrbGTiwVsa/VPPAOTf50p6O1XSppGFUGqsJmKKkxBSXTzMxFAeXC0i+8T8gyGM/IPBoGpjc6ciOxzkaGTV7vbxpbsjsNHEoTrI4SxpYaF7/A8j5JS7ZATwbsMF9dfCBB7KeL8tfEJRHmmsAxnJq5tMLgbuOfooPxZlXdZxcfZOIEiO9Vik5Duo6TuGtbVU0kHg3bxkh1+Ac0C9KwERfcNtQwKeVv6n5bwWPQB0taxdoIbOXgpfO+7EN2ifJe/JFnZTmwoS2+dgi5Vg+KUEs=
+      app: grillo-api
+      edge: true
+      on:
+        branch: main
 notifications:
   email: false
   slack:
-    - rooms:
-      - secure: gaEZIEn9CDeD3AjQkYTA7sSQLB+EIcGPUQekIbGXHV9PZWWl05KXIGdtyopiK+FbYWJgmWKLkL+4PjzbCPminvnDLA6eCBC4mrK1gozax+b7uVI8UZZil1rXmNOCrGbRpEZ3tL3oZ/2FubXTDf/d/vFOyjw0JnfLsBbfL1zg0sP7y+9Wa0spOc0vcS3K75BWWnY8LZrDrVwRTUhMvb2lvpFbXoTKzfl0tCRA38KyWibfOuQ+45lsqJpO+EWBAjDFLfM1qh4U7DL4RlRGDeO2NF99tXArr0fJFtAEQDJOGWSZYsopvHuVD1gxsYQlOF9sdwLwtEvVJ4K6TdQyxaw0KdatvqxyySq47L1rwYfLbhDmBbNPToI7REse8D/gYllydILvKaruiZJ8lSUXGDVOYECPXUKM6FNPxMPidb/v3LcjZR5h9q7dUsXnbvaOg01ooySXe2mO2+y6BUI97QXlvZptWWcU/+ZoN3MVaDHIjLp90DYzgrRMHofRMql1tFGHuaxhRoeAOL3fEjpvQWj1X9+di0fjhnKdEg8SuaO4Xiofv72XX70Ww1YymeWZPLeGzJi1aYhHxlZ6iNehytOuKLbXO2ayN0Wdw57Okm04dHqF3phw3y0NkllEeHxK91qGAl9zRdO9aB9gl4BCcOkCQgGm15XVQASpMFXtJ0n2DC8=
-      on_success: always
-      on_failure: never
-      template:
-      - 'Yeahhhhhh!!! :sunglasses:'
-      - 'Build number: #%{build_number}'
-      - 'Repository: `%{repository_slug}` *%{result}* build (<%{build_url}|#%{build_number}>)
-        for commit (<%{compare_url}|%{commit}>) on branch `%{branch}`.'
-      - 'Execution time: *%{duration}*'
-      - 'Author: %{author}'
-      - 'Message: %{message} Mr. Developer'
-    - rooms:
-      - secure: nQZgCmpy7rCd/9Zds9iR668JRL9O6LXhuFG/dfT38tHxJ/dX28OJPluyVT2emAEpdDtx9GLzQYwgmUOUOxHlR/xpmgycpvEGIZCyuAjZDZl6XnLgskUMm+JSyeef8aWjN52wAzuWeg0DtHxM9rNSQRGWCoJpZyhH6dWzFsgqYOunrkq05UMgJ8zvoQbxzsLmfydH6mW/N0ABjDbOb5cKFFSrjsnZT7Ss2g0WJaW1We/bjzUHmuiTMMHO1DpngJMtTwqyg+wusBGlnbft3ejgyDUKwu5t+oP3AiWL2W8eWyNq3Z4BgH9AbdvV7ZxSSucXmP8BmvJaS+0YmX7buUmkjj08loIkEFCFuaH8YdMU0czF24qQ5dsKUzJIqjtkj+iXFkVfvJ2hsSCbOFfgBm+gy4dF5BvDlKw5FH2I8r6IXtq2LVIg9m4p256iy2SseGR/YoIkR/4OffTbypOH1sNCSHFCpu6IVGxutgeUxMPF48rzVd0aI6sDxo+U5yvoarDVwZt4U47GvOKx1huZhX/MMGBIIXRXF68YcNPlyFK285QPf0KZAU+bVNG78Iv4hxQSw0aotWmz/s7jOPj+CVGd3amue5hS5OmP23rbYncu19Ke6RSmtDUYSUMDc2nJVvncuDJ+Z3QWe+qTRooSUgDCZ8og6vZiC+GRYvZEuvU1c6w=
-      on_success: never
-      on_failure: always
-      template:
-        - 'Build number: #%{build_number}'
-        - 'Repository: `%{repository_slug}` *%{result}* build (<%{build_url}|#%{build_number}>)
-          for commit (<%{compare_url}|%{commit}>) on branch `%{branch}`.'
-        - 'Execution time: *%{duration}*'
-        - 'Author: %{author}'
-        - 'Message: %{message} Pay attention Mr. Developer :thinking_face:'
+  - rooms:
+    - secure: gaEZIEn9CDeD3AjQkYTA7sSQLB+EIcGPUQekIbGXHV9PZWWl05KXIGdtyopiK+FbYWJgmWKLkL+4PjzbCPminvnDLA6eCBC4mrK1gozax+b7uVI8UZZil1rXmNOCrGbRpEZ3tL3oZ/2FubXTDf/d/vFOyjw0JnfLsBbfL1zg0sP7y+9Wa0spOc0vcS3K75BWWnY8LZrDrVwRTUhMvb2lvpFbXoTKzfl0tCRA38KyWibfOuQ+45lsqJpO+EWBAjDFLfM1qh4U7DL4RlRGDeO2NF99tXArr0fJFtAEQDJOGWSZYsopvHuVD1gxsYQlOF9sdwLwtEvVJ4K6TdQyxaw0KdatvqxyySq47L1rwYfLbhDmBbNPToI7REse8D/gYllydILvKaruiZJ8lSUXGDVOYECPXUKM6FNPxMPidb/v3LcjZR5h9q7dUsXnbvaOg01ooySXe2mO2+y6BUI97QXlvZptWWcU/+ZoN3MVaDHIjLp90DYzgrRMHofRMql1tFGHuaxhRoeAOL3fEjpvQWj1X9+di0fjhnKdEg8SuaO4Xiofv72XX70Ww1YymeWZPLeGzJi1aYhHxlZ6iNehytOuKLbXO2ayN0Wdw57Okm04dHqF3phw3y0NkllEeHxK91qGAl9zRdO9aB9gl4BCcOkCQgGm15XVQASpMFXtJ0n2DC8=
+    on_success: always
+    on_failure: never
+    template:
+    - 'Yeahhhhhh!!! :sunglasses:'
+    - 'Build number: #%{build_number}'
+    - 'Repository: `%{repository_slug}` *%{result}* build (<%{build_url}|#%{build_number}>)
+      for commit (<%{compare_url}|%{commit}>) on branch `%{branch}`.'
+    - 'Execution time: *%{duration}*'
+    - 'Author: %{author}'
+    - 'Message: %{message} Mr. Developer'
+  - rooms:
+    - secure: nQZgCmpy7rCd/9Zds9iR668JRL9O6LXhuFG/dfT38tHxJ/dX28OJPluyVT2emAEpdDtx9GLzQYwgmUOUOxHlR/xpmgycpvEGIZCyuAjZDZl6XnLgskUMm+JSyeef8aWjN52wAzuWeg0DtHxM9rNSQRGWCoJpZyhH6dWzFsgqYOunrkq05UMgJ8zvoQbxzsLmfydH6mW/N0ABjDbOb5cKFFSrjsnZT7Ss2g0WJaW1We/bjzUHmuiTMMHO1DpngJMtTwqyg+wusBGlnbft3ejgyDUKwu5t+oP3AiWL2W8eWyNq3Z4BgH9AbdvV7ZxSSucXmP8BmvJaS+0YmX7buUmkjj08loIkEFCFuaH8YdMU0czF24qQ5dsKUzJIqjtkj+iXFkVfvJ2hsSCbOFfgBm+gy4dF5BvDlKw5FH2I8r6IXtq2LVIg9m4p256iy2SseGR/YoIkR/4OffTbypOH1sNCSHFCpu6IVGxutgeUxMPF48rzVd0aI6sDxo+U5yvoarDVwZt4U47GvOKx1huZhX/MMGBIIXRXF68YcNPlyFK285QPf0KZAU+bVNG78Iv4hxQSw0aotWmz/s7jOPj+CVGd3amue5hS5OmP23rbYncu19Ke6RSmtDUYSUMDc2nJVvncuDJ+Z3QWe+qTRooSUgDCZ8og6vZiC+GRYvZEuvU1c6w=
+    on_success: never
+    on_failure: always
+    template:
+    - 'Build number: #%{build_number}'
+    - 'Repository: `%{repository_slug}` *%{result}* build (<%{build_url}|#%{build_number}>)
+      for commit (<%{compare_url}|%{commit}>) on branch `%{branch}`.'
+    - 'Execution time: *%{duration}*'
+    - 'Author: %{author}'
+    - 'Message: %{message} Pay attention Mr. Developer :thinking_face:'

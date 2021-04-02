@@ -30,8 +30,8 @@ public class ProductModelAssembler extends RepresentationModelAssemblerSupport<P
         productModel.setUpdatedDate(String.valueOf(product.getUpdatedDate()));
         productModel.setCategory(toCategoryModel(product.getCategory()));
 
-        productModel.add(linkTo(methodOn(ProductController.class).all(0, 20, product.getCategory().getCode().toString(), "A", null)).withRel("products"));
-        productModel.add(linkTo(methodOn(CategoryController.class).get(product.getCategory().getCode().toString()))
+        productModel.add(linkTo(methodOn(ProductController.class).all(0, 20, product.getCategory().getCode(), "A", null)).withRel("products"));
+        productModel.add(linkTo(methodOn(CategoryController.class).get(product.getCategory().getCode()))
                 .withRel("category"));
 
         return productModel;

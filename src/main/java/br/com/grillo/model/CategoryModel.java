@@ -14,6 +14,7 @@ import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ import java.util.UUID;
 @Relation(collectionRelation = "categories")
 public class CategoryModel extends RepresentationModel<CategoryModel> {
 
-    private UUID code;
+    private Long code;
     @NotNull(message = "Nome não pode ser vazio ou nulo")
     @Size(min = 3, max = 40, message = "Nome deve ter entre 3 a 40 caracteres")
     private String name;

@@ -7,8 +7,6 @@ import br.com.grillo.model.resource.ProductModelAssembler;
 import br.com.grillo.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,35 +29,34 @@ public class ProductController {
     private final ProductService service;
     private final ProductModelAssembler assembler;
 
-    @Autowired
     public ProductController(ProductService service, ProductModelAssembler assembler) {
         this.service = service;
         this.assembler = assembler;
     }
 
     @Operation(summary = "Get all products")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the search ha been succeeded"),
-            @ApiResponse(responseCode = "404", description = "Case the search has been failure")})
+    @ApiResponse(responseCode = "200", description = "Case the search ha been succeeded")
+    @ApiResponse(responseCode = "404", description = "Case the search has been failure")
     @GetMapping
     public ResponseEntity<PagedModel<ProductModel>> all(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "20", required = false) int size,
-            @RequestParam(value = "category", defaultValue = "") String category,
+            @RequestParam(value = "category", defaultValue = "") Long categoryCode,
             @RequestParam(value = "status", defaultValue = "", required = false) String status,
             PagedResourcesAssembler<Product> pagedAssembler) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<Product> products = service.all(category, status, pageable);
+        Page<Product> products = service.all(categoryCode, status, pageable);
 
         PagedModel<ProductModel> pagedModel = pagedAssembler.toModel(products, assembler);
         return new ResponseEntity<>(pagedModel, HttpStatus.OK);
     }
 
     @Operation(summary = "Get a product by its code")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the product has been found"),
-            @ApiResponse(responseCode = "404", description = "Case the product has not been found")})
+    @ApiResponse(responseCode = "200", description = "Case the product has been found")
+    @ApiResponse(responseCode = "404", description = "Case the product has not been found")
     @GetMapping("{code}")
-    public ResponseEntity<ProductModel> get(@PathVariable final String code) {
+    public ResponseEntity<ProductModel> get(@PathVariable final Long code) {
         return service.get(code)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
@@ -77,23 +74,23 @@ public class ProductController {
     }
 
     @Operation(summary = "Update a product by its code")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the product has been found and updated"),
-            @ApiResponse(responseCode = "404", description = "Case the product has not been found")})
+    @ApiResponse(responseCode = "200", description = "Case the product has been found and updated")
+    @ApiResponse(responseCode = "404", description = "Case the product has not been found")
     @PutMapping("{code}")
-    public ResponseEntity<ProductModel> update(@PathVariable final String code,
-                                            @Valid @RequestBody ProductModel productModel) {
+    public ResponseEntity<ProductModel> update(@PathVariable final Long code,
+                                               @Valid @RequestBody ProductModel productModel) {
         return service.get(code).map(map -> {
-            Product product = productModel.convertDTOToEntity(); //mapper.map(productModel, Product.class);
+            Product product = productModel.convertDTOToEntity();
             ProductModel model = assembler.toModel(service.update(product, code));
             return new ResponseEntity<>(model, HttpStatus.OK);
         }).orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND + code));
     }
 
     @Operation(summary = "Remove a product by its code")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the product has been found"),
-            @ApiResponse(responseCode = "204", description = "Case the product has been removed")})
+    @ApiResponse(responseCode = "200", description = "Case the product has been found")
+    @ApiResponse(responseCode = "204", description = "Case the product has been removed")
     @DeleteMapping("{code}")
-    public ResponseEntity<Object> delete(@PathVariable final String code) {
+    public ResponseEntity<Object> delete(@PathVariable final Long code) {
         return service.get(code).map(b -> {
             service.delete(code);
             return ResponseEntity.noContent().build();

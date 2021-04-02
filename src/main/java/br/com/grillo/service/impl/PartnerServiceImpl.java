@@ -30,8 +30,8 @@ public class PartnerServiceImpl implements PartnerService {
 
     @Override
     @Cacheable(value = "partnerId", key = "#code")
-    public Optional<Partner> get(final String code) {
-        return repository.findById(UUID.fromString(code));
+    public Optional<Partner> get(final Long code) {
+        return repository.findById(code);
     }
 
     @Override
@@ -42,20 +42,20 @@ public class PartnerServiceImpl implements PartnerService {
 
     @Override
     @Caching(evict = @CacheEvict(value = "partners", allEntries = true), put = @CachePut(value = "partnerId", key = "#code"))
-    public Partner update(final Partner partnerRequest, final String code) {
-        partnerRequest.setCode(UUID.fromString(code));
+    public Partner update(final Partner partnerRequest, final Long code) {
+        partnerRequest.setCode(code);
         return repository.save(partnerRequest);
     }
 
     @Override
-    public Optional<String> findByDocument(String cnpj) {
-        return repository.findByDocument(cnpj);
+    public Optional<String> findByDocument(String document) {
+        return repository.findByDocument(document);
     }
 
     @Override
     @CacheEvict(value = { "partners", "partnerId" }, allEntries = true)
-    public void delete(final String code) {
-        repository.deleteById(UUID.fromString(code));
+    public void delete(final Long code) {
+        repository.deleteById(code);
     }
 
 }

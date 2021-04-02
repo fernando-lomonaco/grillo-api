@@ -34,9 +34,8 @@ import lombok.Setter;
 public class Finance implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
-    private UUID code;   
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long code;
     private LocalDate buyDate;
     @Column(nullable = false)
     private BigDecimal value;
@@ -53,5 +52,8 @@ public class Finance implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "partner_code", nullable = true)
     private Partner partner;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
+    private UUID externalCode;
 
 }

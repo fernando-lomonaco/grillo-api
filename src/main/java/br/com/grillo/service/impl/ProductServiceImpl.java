@@ -25,8 +25,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Cacheable(value = "products", unless = "#result==null or #result.isEmpty()", key = "#category.concat('-').concat(#pageable.getPageNumber().toString())")
-    public Page<Product> all(String category, String status, Pageable pageable) {
-        return repository.findByCategoryCodeAndStatus(UUID.fromString(category), status.toUpperCase().charAt(0), pageable);
+    public Page<Product> all(Long categoryCode, String status, Pageable pageable) {
+        return repository.findByCategoryCodeAndStatus(categoryCode, status.toUpperCase().charAt(0), pageable);
     }
 
     //@Cacheable(value = "findByStatus", unless = "#result==null or #result.isEmpty()", key = "#status.concat('-').#pageable.getPageNumber().toString()")
@@ -36,8 +36,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Cacheable(value = "productId", key = "#code", unless = "#result==null")
-    public Optional<Product> get(final String code) {
-        return repository.findById(UUID.fromString(code));
+    public Optional<Product> get(final Long code) {
+        return repository.findById(code);
     }
 
     @Override
@@ -48,15 +48,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Caching(evict = @CacheEvict(value = {"products"}, allEntries = true), put = @CachePut(value = "productId", key = "#code"))
-    public Product update(final Product productRequest, final String code) {
-        productRequest.setCode(UUID.fromString(code));
+    public Product update(final Product productRequest, final Long code) {
+        productRequest.setCode(code);
         return repository.save(productRequest);
     }
 
     @Override
     @CacheEvict(value = {"products", "productId"}, allEntries = true)
-    public void delete(final String code) {
-        repository.deleteById(UUID.fromString(code));
+    public void delete(final Long code) {
+        repository.deleteById(code);
     }
 
 }

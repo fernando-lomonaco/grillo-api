@@ -29,9 +29,8 @@ import lombok.Setter;
 public class Product implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
-    private UUID code;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long code;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
@@ -46,5 +45,8 @@ public class Product implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_code", nullable = false)
     private Category category;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
+    private UUID externalCode;
 
 }

@@ -9,10 +9,11 @@ import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
-public class SignupModel {
+public class AuthModel extends RepresentationModel<AuthModel> {
 
     @NotBlank
     @Size(min = 3, max = 20)
@@ -21,7 +22,7 @@ public class SignupModel {
     @Size(max = 50)
     @Email
     private String email;
-    @NotBlank
+    @NotNull(message = "Deve-se atribuir uma senha")
     @Size(min = 6, max = 40)
     private String password;
     @NotNull(message = "Deve-se atribuir um perfil")

@@ -1,61 +1,54 @@
 package br.com.grillo.repository;
 
-import br.com.grillo.manager.LifeCycleManager;
 import br.com.grillo.model.entity.Category;
+import br.com.grillo.util.DateUtils;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.text.ParseException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@ActiveProfiles("integration-test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@ContextConfiguration(initializers = {LifeCycleManager.class})
-public class CategoryRepositoryTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
+class CategoryRepositoryTest {
+
+    static final Long CODE = 39L;
+    static final String NAME = "Bebidas";
+    static final String DESCRIPTION = "Bebida sem alcool como Refrigerantes e Sucos";
+    static final String STATUS = "A";
+    static final String TRANSACTION_DATE = "2020-08-21T18:32:04.150";
+    static final String URL = "/categories";
+    static final String EXTERNAL_CODE = "05ae9332-394f-4d6a-8823-2245f6d52bce";
 
     @Autowired
-    CategoryRepository categoryRepository;
-
-    @BeforeAll
-    void setUp() {
-
-        Category category = new Category(null, "Teste nome", "Teste descricao", 'A', LocalDateTime.now(), LocalDateTime.now());
-
-        categoryRepository.save(category);
-    }
+    private CategoryRepository repository;
 
     @Test
+    @DisplayName("Teste repository salvar categoria")
     @Order(1)
-    public void testSave() {
+    void testSave() throws ParseException {
 
-        Category category = new Category(null, "Teste nome", "Teste descricao", 'A', LocalDateTime.now(), LocalDateTime.now());
+        Category category = Category.builder()
+                .code(CODE)
+                .name(NAME)
+                .description(DESCRIPTION)
+                .status(STATUS.charAt(0))
+                .createdDate(DateUtils.getLocalDateTimeFromString
+                        (TRANSACTION_DATE.concat("Z")))
+                .updatedDate(DateUtils.getLocalDateTimeFromString
+                        (TRANSACTION_DATE.concat("Z")))
+                .externalCode(UUID.fromString(EXTERNAL_CODE))
+                .build();
 
-        Category response = categoryRepository.save(category);
-
+        Category response = repository.save(category);
         assertNotNull(response);
-    }
-
-    @Test
-    @Order(1)
-    public void testFindById() {
-
-        Category category = new Category(null, "Teste nome", "Teste descricao", 'A', LocalDateTime.now(), LocalDateTime.now());
-        Category save = categoryRepository.save(category);
-
-        Optional<Category> response = categoryRepository.findById(save.getCode());
-
-        assertNotNull(response.isPresent() ? response.get() : Optional.empty());
-    }
-
-    @AfterAll
-    void tearDown() {
-        categoryRepository.deleteAll();
     }
 }

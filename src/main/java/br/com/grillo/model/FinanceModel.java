@@ -13,14 +13,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Getter
 @Setter
 @Relation(collectionRelation = "finances")
 public class FinanceModel extends RepresentationModel<FinanceModel> {
 
-    private UUID code;
+    private Long code;
     @NotNull(message = "Data não pode ser vazia ou nula")
     private LocalDate buyDate;
     @NotNull(message = "Valor não pode ser vazio ou nulo")

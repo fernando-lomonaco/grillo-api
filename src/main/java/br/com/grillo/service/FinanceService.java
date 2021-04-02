@@ -9,14 +9,14 @@ import br.com.grillo.model.entity.Finance;
 
 public interface FinanceService {
 
-    Page<Finance> all(String product, String partner, Pageable pageable);
+    Page<Finance> all(Long productCode, String partner, Pageable pageable);
 
     Finance save(Finance finance);
 
-    Optional<Finance> get(String code);
+    Optional<Finance> get(Long code);
 
-    Finance update(Finance finance, String code);
+    Finance update(Finance finance, Long code);
 
-    void delete(String code);
+    void delete(Long code);
 
 }

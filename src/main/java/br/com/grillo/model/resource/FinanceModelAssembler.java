@@ -32,9 +32,9 @@ public class FinanceModelAssembler extends RepresentationModelAssemblerSupport<F
         financeModel.setPartner(toPartnerModel(finance.getPartner()));
         financeModel.setProduct(toProductModel(finance.getProduct()));
 
-        financeModel.add(linkTo(methodOn(ProductController.class).get(finance.getProduct().getCode().toString()))
+        financeModel.add(linkTo(methodOn(ProductController.class).get(finance.getProduct().getCode()))
                 .withRel("product"));
-        financeModel.add(linkTo(methodOn(PartnerController.class).get(finance.getPartner().getCode().toString()))
+        financeModel.add(linkTo(methodOn(PartnerController.class).get(finance.getPartner().getCode()))
                 .withRel("partner"));
         financeModel.add(linkTo(FinanceController.class).withRel("finances"));
 

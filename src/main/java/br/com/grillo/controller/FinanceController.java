@@ -7,7 +7,6 @@ import br.com.grillo.model.resource.FinanceModelAssembler;
 import br.com.grillo.service.FinanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,27 +36,27 @@ public class FinanceController {
     }
 
     @Operation(summary = "Get all finances")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the search ha been succeeded"),
-            @ApiResponse(responseCode = "404", description = "Case the search has been failure")})
+    @ApiResponse(responseCode = "200", description = "Case the search ha been succeeded")
+    @ApiResponse(responseCode = "404", description = "Case the search has been failure")
     @GetMapping
     public ResponseEntity<PagedModel<FinanceModel>> all(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "20", required = false) int size,
-            @RequestParam(value = "product", defaultValue = "", required = false) String product,
+            @RequestParam(value = "product", defaultValue = "", required = false) Long productCode,
             @RequestParam(value = "partner", defaultValue = "", required = false) String partner,
             PagedResourcesAssembler<Finance> pagedAssembler) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<Finance> finances = service.all(product, partner, pageable);
+        Page<Finance> finances = service.all(productCode, partner, pageable);
         PagedModel<FinanceModel> pagedModel = pagedAssembler.toModel(finances, assembler);
         return new ResponseEntity<>(pagedModel, HttpStatus.OK);
     }
 
     @Operation(summary = "Get a finance by its code")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the finance has been found"),
-            @ApiResponse(responseCode = "404", description = "Case the finance has not been found")})
+    @ApiResponse(responseCode = "200", description = "Case the finance has been found")
+    @ApiResponse(responseCode = "404", description = "Case the finance has not been found")
     @GetMapping("{code}")
-    public ResponseEntity<FinanceModel> get(@PathVariable final String code) {
+    public ResponseEntity<FinanceModel> get(@PathVariable final Long code) {
         return service.get(code).map(assembler::toModel).map(ResponseEntity::ok)
                 .orElseThrow(() -> new EntityNotFoundException(FINANCE_NOT_FOUND + code));
     }
@@ -73,10 +72,10 @@ public class FinanceController {
     }
 
     @Operation(summary = "Update a finance by its code")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the finance has been found and updated"),
-            @ApiResponse(responseCode = "404", description = "Case the finance has not been found")})
+    @ApiResponse(responseCode = "200", description = "Case the finance has been found and updated")
+    @ApiResponse(responseCode = "404", description = "Case the finance has not been found")
     @PutMapping("{code}")
-    public ResponseEntity<FinanceModel> put(@PathVariable final String code,
+    public ResponseEntity<FinanceModel> put(@PathVariable final Long code,
                                             @Valid @RequestBody FinanceModel financeModel) {
         return service.get(code).map(map -> {
             Finance finance = financeModel.convertDTOToEntity();
@@ -86,10 +85,10 @@ public class FinanceController {
     }
 
     @Operation(summary = "Remove a finance by its code")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the finance has been found"),
-            @ApiResponse(responseCode = "204", description = "Case the finance has been removed")})
+    @ApiResponse(responseCode = "200", description = "Case the finance has been found")
+    @ApiResponse(responseCode = "204", description = "Case the finance has been removed")
     @DeleteMapping("{code}")
-    public ResponseEntity<Object> delete(@PathVariable final String code) {
+    public ResponseEntity<Object> delete(@PathVariable final Long code) {
         return service.get(code).map(f -> {
             service.delete(code);
             return ResponseEntity.noContent().build();

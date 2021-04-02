@@ -15,7 +15,6 @@ import org.springframework.hateoas.server.core.Relation;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -26,7 +25,7 @@ import java.util.UUID;
 @Relation(collectionRelation = "products")
 public class ProductModel extends RepresentationModel<ProductModel> {
 
-    private UUID code;
+    private Long code;
     @NotNull(message = "Nome não pode ser vazio ou nulo")
     @Size(min = 3, max = 30, message = "Nome deve ter entre 3 a 30 caracteres")
     private String name;
