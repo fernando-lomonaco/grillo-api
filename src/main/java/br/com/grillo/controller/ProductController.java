@@ -8,7 +8,6 @@ import br.com.grillo.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,6 @@ public class ProductController {
     private final ProductService service;
     private final ProductModelAssembler assembler;
 
-    @Autowired
     public ProductController(ProductService service, ProductModelAssembler assembler) {
         this.service = service;
         this.assembler = assembler;
