@@ -27,10 +27,10 @@ import lombok.Setter;
 @Entity(name = "mn_stock")
 public class Stock {
 
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
-    private UUID code;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long code;
     @Column(nullable = false)
     private int amount;
     @OneToOne
@@ -40,6 +40,9 @@ public class Stock {
     private LocalDateTime createdDate;
     @UpdateTimestamp
     private LocalDateTime updatedDate;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
+    private UUID externalCode;
 
 
 }

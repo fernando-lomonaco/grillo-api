@@ -26,9 +26,8 @@ import lombok.Setter;
 public class Partner implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
-    private UUID code;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long code;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
@@ -38,5 +37,8 @@ public class Partner implements Serializable {
     private LocalDateTime createdDate;
     @UpdateTimestamp
     private LocalDateTime updatedDate;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
+    private UUID externalCode;
 
 }

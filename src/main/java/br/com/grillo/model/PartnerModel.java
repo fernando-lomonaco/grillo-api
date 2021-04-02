@@ -1,13 +1,11 @@
 package br.com.grillo.model;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import br.com.grillo.model.entity.Partner;
-import br.com.grillo.model.entity.Product;
 import br.com.grillo.util.validator.ValidCNPJ;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -25,7 +23,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Relation(collectionRelation = "partners")
 public class PartnerModel extends RepresentationModel<PartnerModel> {
 
-    private UUID code;
+    private Long code;
     @NotNull(message = "Nome não pode ser vazio ou nulo")
     @Size(min = 3, max = 60, message = "Nome deve ter entre 3 a 60 caracteres")
     private String name;
