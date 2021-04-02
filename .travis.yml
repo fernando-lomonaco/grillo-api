@@ -23,7 +23,7 @@ jobs:
   include:
   - stage: Init
     script:
-    - "####################### INICIO ##########################"
+    - echo "####################### INICIO ##########################"
     - echo $TRAVIS_COMMIT
     - echo $TRAVIS_TAG
     - echo $TRAVIS_BRANCH
