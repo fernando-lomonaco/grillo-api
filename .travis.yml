@@ -14,9 +14,9 @@ stages:
 - name: Uni Test
 - name: Sonar
 - name: Build docker image
-  if: (branch = main) AND "$TRAVIS_BRANCH" = ~ ^feature$
+  if: branch = master AND "$TRAVIS_BRANCH" = ~ ^feature\/*
 - name: Deploy
-  if: branch = main
+  if: branch = master
 before_install:
 - chmod +x mvnw
 jobs:
@@ -51,7 +51,7 @@ jobs:
       app: grillo-api
       edge: true
       on:
-        branch: main
+        branch: master
 notifications:
   email: false
   slack:
