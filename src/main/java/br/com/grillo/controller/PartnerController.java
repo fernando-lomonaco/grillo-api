@@ -35,8 +35,8 @@ public class PartnerController {
     }
 
     @Operation(summary = "Get all partners")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the search ha been succeeded"),
-            @ApiResponse(responseCode = "404", description = "Case the search has been failure")})
+    @ApiResponse(responseCode = "200", description = "Case the search ha been succeeded")
+    @ApiResponse(responseCode = "404", description = "Case the search has been failure")
     @GetMapping
     public ResponseEntity<PagedModel<PartnerModel>> all(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
@@ -50,10 +50,10 @@ public class PartnerController {
     }
 
     @Operation(summary = "Get a partner by its code")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the partner has been found"),
-            @ApiResponse(responseCode = "404", description = "Case the partner has not been found")})
+    @ApiResponse(responseCode = "200", description = "Case the partner has been found")
+    @ApiResponse(responseCode = "404", description = "Case the partner has not been found")
     @GetMapping("{code}")
-    public ResponseEntity<PartnerModel> get(@PathVariable final String code) {
+    public ResponseEntity<PartnerModel> get(@PathVariable final Long code) {
         return service.get(code)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
@@ -71,10 +71,10 @@ public class PartnerController {
     }
 
     @Operation(summary = "Update a partner by its code")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the partner has been found and updated"),
-            @ApiResponse(responseCode = "404", description = "Case the partner has not been found")})
+    @ApiResponse(responseCode = "200", description = "Case the partner has been found and updated")
+    @ApiResponse(responseCode = "404", description = "Case the partner has not been found")
     @PutMapping("{code}")
-    public ResponseEntity<PartnerModel> put(@PathVariable final String code,
+    public ResponseEntity<PartnerModel> put(@PathVariable final Long code,
                                             @Valid @RequestBody PartnerModel partnerModel) {
         return service.get(code).map(map -> {
             Partner partner = partnerModel.convertDTOToEntity();
@@ -84,10 +84,10 @@ public class PartnerController {
     }
 
     @Operation(summary = "Remove a partner by its code")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Case the partner has been found"),
-            @ApiResponse(responseCode = "204", description = "Case the partner has been removed")})
+    @ApiResponse(responseCode = "200", description = "Case the partner has been found")
+    @ApiResponse(responseCode = "204", description = "Case the partner has been removed")
     @DeleteMapping("{code}")
-    public ResponseEntity<Object> delete(@PathVariable final String code) {
+    public ResponseEntity<Object> delete(@PathVariable final Long code) {
         return service.get(code).map(b -> {
             service.delete(code);
             return ResponseEntity.noContent().build();
