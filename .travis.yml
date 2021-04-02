@@ -14,9 +14,7 @@ stages:
 - name: Uni Test
 - name: Sonar
 - name: Build docker image
-  if: branch = master AND "$TRAVIS_BRANCH" = ~ ^feature\/*
 - name: Deploy
-  if: branch = master
 before_install:
 - chmod +x mvnw
 jobs:
@@ -41,7 +39,7 @@ jobs:
     - docker pull adoptopenjdk/openjdk11:alpine-jre
     - "./mvnw deploy jib:build -P deploy-docker"
   - stage: Deploy
-    script: skip
+    script:
     - echo "###############################################"
     - echo "Preparando deploy"
     deploy:
@@ -51,7 +49,7 @@ jobs:
       app: grillo-api
       edge: true
       on:
-        branch: master
+        branch: main
 notifications:
   email: false
   slack:
