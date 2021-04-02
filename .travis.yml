@@ -1,5 +1,11 @@
 language: java
 jdk: openjdk11
+script:
+  - echo $TRAVIS_COMMIT
+  - echo $TRAVIS_TAG
+  - echo $TRAVIS_BRANCH
+  - echo $TRAVIS_BUILD_NUMBER
+  - echo $TRAVIS_REPO_SLUG
 cache:
   directories:
   - "$HOME/.m2"
@@ -9,7 +15,7 @@ addons:
   sonarcloud:
     organization: grillo-api
     token:
-      secure: UE3V0+wjBbhkAQx4tf//azIx0GEE8Nqap6oxO3hIuWL1LdX+/eAEAABTWqeVQEz+uvOG8qcRGCJSS0NQeuUbXkW8WZvTduR/fTBmMfd36bUis2XR1c7akXyY5TF8L2ANGLCplBL4vAwnCBwSL8T8miMsGiQjYOXKV290DeWsYRUD9FcZt9c0s8/VU5BXjm+LVUgrC6I8Xj5XYWo8BL+zPZCX57l6UTDkf9E/UNFdsNRYhxXGqz8zC2y0vhx0vc11vbSRdtwCi+gIAgfHWQ1ucyK4mPXSEOledejhBAXkjWthfWaML3CkWHIbkMWZg8V8MjOUZwJT+XfITIM8yb79GWYz5qtjilBh4vWff8A9r1uSuwmcDYh/eg+bb2+4Zmfqk7DIFKRK3mgT4xCtJ/KQiUvj0wEuygCpvDCyI71ur/Omt3NfeS3oMo9IdaTAjzSGk8cwPzXUNEt4xAHHAVcTfiOlUrHae9O09XNYcIxQW3STlqvQoMKLAryx5bLznO2ihWCKgi0+tJ/FKcG+SWFvpcrmSHdXsfjMVtibPXesxRa6LEO/78gVcmaNaFCwf3/HwoULOlgJpzcle9dR6io9eiozH6XUQ16kJM3FR6UctAooEst/AEGpMA0mBa1cUVbjEuzUlKpr0Gf3ZDUsRSePK/7eDA6GdKkJbl8wctZMQfs=
+      secure: e4lBUlGak6y7L+mYYIH9VvdulpjPWXmmx+RS17vEKwmjRr+kzKbdZEgkXU3QxNg7X2R2CyQ1UCr45wqRnJandkvW0jhg9EmwvLQsK3/V2DeJIyMHF7mpxNJPrG8YiOJXcIFkM2yBIfhshCfWGfeO8hlX+N0AAAIiPrPtzRU5I+9R0LXAGSAXJwYTmLM6yjNYB3ZZIvq4qi+F5O/kkGS+PxoWWE3+djNrVO6SZh6/D61WridwEnSrsbg/aacdJyo57vNvPW5AT2fwpy2xg6GtCVw1LDPZ8Y7JDub12F/UQnTKXTXZh3OYb17LuY62jTUpc8LGyaQJjGxIsmMluUMYAROiDVVaElU8ROSfEb5HxCnlu6Ogn2qqsmXCNVDMdTpvRqaAxeyrfxUm5LU3fngwEasivNB8D38UaNNzAPQJLc4aycp74T4brTBrwFBLzePv9/4kMyQ+se4LNNyDuCP0+KYjhBmlZZDRRcjuPnNtIa9wtRSZx80ignu0DBlKv4lftZfOyKkBd6S2sOXVgIE3oaJmb9I8ICbTpz8XUWx1xkGTkOZR0REUGExYAGRWFBRPu9zly+53kaXGamGmQS8wNhpor5b5mGczqU9B0WtWl0QE07f39FbHySPjYUNN1SI34jiYjw/vAtORGpzNQTSPqOQqRl28erhrcw9jKbKIJL4=
 stages:
 - name: Uni Test
 - name: Sonar
@@ -17,8 +23,6 @@ stages:
 - name: Deploy
 before_install:
 - chmod +x mvnw
-script:
-- echo 'Iniciando processo!'
 jobs:
   include:
   - stage: Uni Test
