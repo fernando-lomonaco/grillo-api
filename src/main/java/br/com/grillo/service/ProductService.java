@@ -8,13 +8,13 @@ import java.util.Optional;
 
 public interface ProductService {
 
-    Page<Product> all(String category, String status, Pageable pageable);
+    Page<Product> all(Long category, String status, Pageable pageable);
 
     Product save(Product product);
 
-    Optional<Product> get(String code);
+    Optional<Product> get(Long code);
 
-    Product update(Product product, String code);
+    Product update(Product product, Long code);
 
-    void delete(String code);
+    void delete(Long code);
 }

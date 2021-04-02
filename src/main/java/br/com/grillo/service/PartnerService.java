@@ -12,12 +12,11 @@ public interface PartnerService {
 
     Partner save(Partner partner);
 
-    Optional<Partner> get(String code);
+    Optional<Partner> get(Long code);
 
-    Partner update(Partner partner, String code);
+    Partner update(Partner partner, Long code);
 
     Optional<String> findByDocument(String cnpj);
 
-
-    void delete(String code);
+    void delete(Long code);
 }

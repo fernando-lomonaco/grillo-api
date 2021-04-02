@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +21,11 @@ public class FinanceServiceImpl implements FinanceService {
     private final FinanceRepository repository;
 
     @Override
-    public Page<Finance> all(String product, String partner, Pageable pageable) {
-        if (product.isEmpty() && partner.isEmpty()) {
+    public Page<Finance> all(Long productCode, String partner, Pageable pageable) {
+        if (productCode == null && partner.isEmpty()) {
             return this.findAll(pageable);
         }
-        return this.findByProductCode(product, partner, pageable);
+        return this.findByProductCode(productCode, partner, pageable);
     }
 
     @Cacheable(value = "finances", key = "#pageable.getPageNumber().toString()", unless = "#result==null or #result.isEmpty()")
@@ -35,14 +34,14 @@ public class FinanceServiceImpl implements FinanceService {
     }
 
     @Cacheable(value = "financesByProductOrPartner", unless = "#result==null or #result.isEmpty()", key = "#product.concat('-').concat(#partner).concat('-').concat(#pageable.getPageNumber().toString())")
-    public Page<Finance> findByProductCode(String product, String partner, Pageable pageable) {
-        return repository.findByProductCode(UUID.fromString(product), pageable);
+    public Page<Finance> findByProductCode(Long productCode, String partner, Pageable pageable) {
+        return repository.findByProductCode(productCode, pageable);
     }
 
     @Override
     @Cacheable(value = "financeId", key = "#code")
-    public Optional<Finance> get(final String code) {
-        return repository.findById(UUID.fromString(code));
+    public Optional<Finance> get(final Long code) {
+        return repository.findById(code);
     }
 
     @Override
@@ -53,15 +52,15 @@ public class FinanceServiceImpl implements FinanceService {
 
     @Override
     @Caching(evict = @CacheEvict(value = {"finances", "financesByProductOrPartner"}, allEntries = true), put = @CachePut(value = "financeId", key = "#code"))
-    public Finance update(final Finance financeRequest, final String code) {
-        financeRequest.setCode(UUID.fromString(code));
+    public Finance update(final Finance financeRequest, final Long code) {
+        financeRequest.setCode(code);
         return repository.save(financeRequest);
     }
 
     @Override
     @CacheEvict(value = {"finances", "financesByProductOrPartner", "financeId"}, allEntries = true)
-    public void delete(final String code) {
-        repository.deleteById(UUID.fromString(code));
+    public void delete(final Long code) {
+        repository.deleteById(code);
     }
 
 }

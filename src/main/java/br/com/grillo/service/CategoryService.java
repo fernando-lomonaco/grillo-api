@@ -13,10 +13,10 @@ public interface CategoryService {
 
     Category save(Category category);
 
-    Optional<Category> get(String code);
+    Optional<Category> get(Long code);
 
-    Category update(Category category, String code);
+    Category update(Category category, Long code);
 
-    void delete(String code);
+    void delete(Long code);
 
 }
