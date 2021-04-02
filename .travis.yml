@@ -17,6 +17,8 @@ stages:
 - name: Deploy
 before_install:
 - chmod +x mvnw
+script:
+- echo 'Iniciando processo!'
 jobs:
   include:
   - stage: Uni Test
@@ -32,6 +34,7 @@ jobs:
     - "./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
       -Dsonar.projectKey=fernando-lomonaco_grillo-api"
   - stage: Build docker image
+    if: branch = main
     script:
     - echo "###############################################"
     - echo "Building docker image"
@@ -39,6 +42,7 @@ jobs:
     - docker pull adoptopenjdk/openjdk11:alpine-jre
     - "./mvnw deploy jib:build -P deploy-docker"
   - stage: Deploy
+    if: branch = main
     script:
     - echo "###############################################"
     - echo "Preparando deploy"
