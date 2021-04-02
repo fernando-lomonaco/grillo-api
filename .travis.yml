@@ -11,37 +11,34 @@ addons:
     token:
       secure: UE3V0+wjBbhkAQx4tf//azIx0GEE8Nqap6oxO3hIuWL1LdX+/eAEAABTWqeVQEz+uvOG8qcRGCJSS0NQeuUbXkW8WZvTduR/fTBmMfd36bUis2XR1c7akXyY5TF8L2ANGLCplBL4vAwnCBwSL8T8miMsGiQjYOXKV290DeWsYRUD9FcZt9c0s8/VU5BXjm+LVUgrC6I8Xj5XYWo8BL+zPZCX57l6UTDkf9E/UNFdsNRYhxXGqz8zC2y0vhx0vc11vbSRdtwCi+gIAgfHWQ1ucyK4mPXSEOledejhBAXkjWthfWaML3CkWHIbkMWZg8V8MjOUZwJT+XfITIM8yb79GWYz5qtjilBh4vWff8A9r1uSuwmcDYh/eg+bb2+4Zmfqk7DIFKRK3mgT4xCtJ/KQiUvj0wEuygCpvDCyI71ur/Omt3NfeS3oMo9IdaTAjzSGk8cwPzXUNEt4xAHHAVcTfiOlUrHae9O09XNYcIxQW3STlqvQoMKLAryx5bLznO2ihWCKgi0+tJ/FKcG+SWFvpcrmSHdXsfjMVtibPXesxRa6LEO/78gVcmaNaFCwf3/HwoULOlgJpzcle9dR6io9eiozH6XUQ16kJM3FR6UctAooEst/AEGpMA0mBa1cUVbjEuzUlKpr0Gf3ZDUsRSePK/7eDA6GdKkJbl8wctZMQfs=
 stages:
-- name: Unit Tests
-- name: Static Analysis
+- name: Test
+- name: Sonar
   if: branch = main AND branch = "$TRAVIS_BRANCH"
 - name: Build docker image
 - name: Deploy
   if: branch = main
 before_install:
 - chmod +x mvnw
-- echo "Iniciando Stage Publicação - $TRAVIS_BRANCH"
-
 jobs:
   include:
-  - stage: Unit Tests
+  - stage: Test
     script:
-    - echo "###################################3"
     - "./mvnw clean install"
-  - stage: Static Analysis
+  - stage: Sonar
     script:
     - echo "Executing Sonar"
     - bash <(curl -s https://codecov.io/bash)
     - "./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
       -Dsonar.projectKey=fernando-lomonaco_grillo-api"
   - stage: Build docker image
-    script: skip
+    script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - echo "Building docker image"
     - docker pull adoptopenjdk/openjdk11:alpine-jre
     - "./mvnw deploy jib:build -P deploy-docker"
+    - echo "Preparando deploy"
   - stage: Deploy
     script: skip
-    - echo "Preparando deploy"
     deploy:
       provider: heroku
       api_key:
