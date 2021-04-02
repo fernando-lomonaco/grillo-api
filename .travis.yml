@@ -23,7 +23,6 @@ jobs:
   include:
   - stage: Init
     script:
-    - echo "####################### INICIO ##########################"
     - echo $TRAVIS_COMMIT
     - echo $TRAVIS_TAG
     - echo $TRAVIS_BRANCH
@@ -52,7 +51,7 @@ jobs:
     - "./mvnw deploy jib:build -P deploy-docker"
   - stage: Deploy
     if: branch = main
-    script: skip
+    script:
     - echo "###############################################"
     - echo "Preparando deploy"
     deploy:
