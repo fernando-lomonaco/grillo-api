@@ -23,12 +23,11 @@ jobs:
   include:
   - stage: Init
     script:
-    - echo "##################### INIT ##########################"
+    - echo "##################### INIT - $TRAVIS_REPO_SLUG"
     - echo $TRAVIS_COMMIT
     - echo $TRAVIS_TAG
     - echo $TRAVIS_BRANCH
     - echo $TRAVIS_BUILD_NUMBER
-    - echo $TRAVIS_REPO_SLUG
   - stage: Uni Test
     script:
     - echo "##################### Executing Unit Test ##########################"
