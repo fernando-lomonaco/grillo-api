@@ -61,7 +61,6 @@ jobs:
 notifications:
   email: false
   slack:
-    on_pull_requests: true
   - rooms:
     - secure: JJS7EMIoZQfwnrfy+ozM6kr4t7Ic6cTotRQ/k7GBdueh0ejvl0seKgTCfGVYLZLSUVhCexCpT6mJbFN3eF4BmAj0PUdnyXO/+lrk2vjlfthFl7W0YOCGxSR0UJUJS7x8yBaxkcvE83O+wzS6mUMzB3ys/6vpypxku0dMOJZQVuD1KsK3P4sDsttXTwvz8SpOF2oRAhUDBcxjY6i9/5l/+cBmn5TjEN+ApQPvpVUEd4mXYd34yBx/TZRel3vsnc0tqW2xPxSgQPct2D0jPksavLWiNWaWINyf8VzNurAmmvRGmMNd3Ib3I89/u+nvKSnXetG8ZxKsfSw4CjkMg0VYWkn+cRGYy6yqMp51e6/0VIRXjey1GDdRKIytlwo+r5cCcAU1wMROm+LZkweGw4XkOINAcPQsoaFPVNxfjt1eR4FfDHEkKkgY/WTJ62aWUq5vNiz7GZ5Y63C0qKk/B5z6REJKpluf8LK7+cmZSYRc/rk8Bag9peDxTlcUOGlhFzWYuLtzgFLV1SNSuc31rSlk1InKErD/MrytOtbFJ6hzQcyb50eeGaOqc/pVfCPCZA/3wZpYVxU/oUvvi0aOsMwV5UIdYu+tuaH0FIreT88KfbjsjXvsJ6n5WBMiAwOJ8ZqgxR07AafotMQ2xdIJf0amjm5N6mMmSKvoC+qo9krDpXY=
     on_success: always
