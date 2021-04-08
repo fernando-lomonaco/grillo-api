@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import br.com.grillo.dto.response.ExceptionResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
-
 public class CustomResponseEntity extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -22,19 +22,19 @@ public class CustomResponseEntity extends ResponseEntityExceptionHandler {
 
         final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(), LocalDateTime.now(), request.getDescription(false));
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
-            final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+                                                                  final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
         final List<ObjectError> errors = getErrors(ex);
         final ExceptionArgumentNotValidResponse errorResponse = getErrorResponse(ex, status, errors);
         return new ResponseEntity<>(errorResponse, status);
     }
 
     private ExceptionArgumentNotValidResponse getErrorResponse(MethodArgumentNotValidException ex, HttpStatus status,
-            List<ObjectError> errors) {
+                                                               List<ObjectError> errors) {
         return new ExceptionArgumentNotValidResponse("Request has invalids fields", status.value(),
                 status.getReasonPhrase(), ex.getBindingResult().getObjectName(), LocalDateTime.now(), errors);
     }
