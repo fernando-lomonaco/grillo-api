@@ -5,11 +5,11 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import br.com.grillo.model.entity.Finance;
+import br.com.grillo.model.Finance;
 
 public interface FinanceService {
 
-    Page<Finance> all(Long productCode, String partner, Pageable pageable);
+    Page<Finance> all(Pageable pageable);
 
     Finance save(Finance finance);
 

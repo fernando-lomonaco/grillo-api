@@ -1,33 +1,31 @@
-package br.com.grillo.service.impl;
+package br.com.grillo.service.security;
 
-import br.com.grillo.config.jwt.UserDetailsImpl;
 import br.com.grillo.model.Auth;
-import br.com.grillo.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import br.com.grillo.model.security.JwtUserFactory;
+import br.com.grillo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
     @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Auth auth = userRepository.findByUsername(username)
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        final Auth auth = userService.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-        return UserDetailsImpl.build(auth);
+        return JwtUserFactory.create(auth);
     }
 
     public Optional<Auth> findByUsername(String name) {
-        return userRepository.findByUsername(name);
+        return userService.findByUsername(name);
     }
 }

@@ -1,6 +1,6 @@
 package br.com.grillo.service;
 
-import br.com.grillo.model.entity.Partner;
+import br.com.grillo.model.Partner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

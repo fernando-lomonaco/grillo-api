@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.grillo.model.entity.Partner;
+import br.com.grillo.model.Partner;
 import br.com.grillo.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +37,7 @@ public class PartnerServiceImpl implements PartnerService {
     @Override
     @CacheEvict(value = "partners", allEntries = true)
     public Partner save(final Partner partnerRequest) {
+        partnerRequest.setExternalCode(UUID.randomUUID());
         return repository.save(partnerRequest);
     }
 

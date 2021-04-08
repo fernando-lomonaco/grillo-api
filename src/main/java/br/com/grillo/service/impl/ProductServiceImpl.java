@@ -1,10 +1,11 @@
 package br.com.grillo.service.impl;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import br.com.grillo.service.PartnerService;
+import br.com.grillo.exception.EntityNotFoundException;
+import br.com.grillo.model.Product;
+import br.com.grillo.repository.CategoryRepository;
+import br.com.grillo.repository.ProductRepository;
 import br.com.grillo.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,26 +14,28 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.grillo.model.entity.Product;
-import br.com.grillo.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+
+import static br.com.grillo.util.Constants.CATEGORY_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
+    private final CategoryRepository categoryRepository;
 
     @Override
-    @Cacheable(value = "products", unless = "#result==null or #result.isEmpty()", key = "#category.concat('-').concat(#pageable.getPageNumber().toString())")
-    public Page<Product> all(Long categoryCode, String status, Pageable pageable) {
-        return repository.findByCategoryCodeAndStatus(categoryCode, status.toUpperCase().charAt(0), pageable);
+    @Cacheable(value = "products", key = "#pageable.getPageNumber().toString()", unless = "#result==null or #result.isEmpty()")
+    public Page<Product> all(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
-    //@Cacheable(value = "findByStatus", unless = "#result==null or #result.isEmpty()", key = "#status.concat('-').#pageable.getPageNumber().toString()")
-    // public Page<Product> findByStatus(String status, Pageable pageable) {
-    //     return repository.findByStatus(status.toUpperCase().charAt(0), pageable);
-    //  }
+    @Override
+    @Cacheable(value = "products", key = "#categoryCode.toString().concat('-').concat(#pageable.getPageNumber().toString())", unless = "#result==null or #result.isEmpty()")
+    public Page<Product> findByCategory(Long categoryCode, Pageable pageable) {
+        return repository.findByCategoryCode(categoryCode, pageable);
+    }
 
     @Override
     @Cacheable(value = "productId", key = "#code", unless = "#result==null")
@@ -41,16 +44,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @CacheEvict(value = {"products"}, allEntries = true)
+    @CacheEvict(value = "products", allEntries = true)
     public Product save(final Product productRequest) {
-        return repository.save(productRequest);
+        return categoryRepository.findById(productRequest.getCategory().getCode())
+                .map(x -> repository.save(productRequest))
+                .orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND + productRequest.getCategory().getCode()));
     }
 
     @Override
-    @Caching(evict = @CacheEvict(value = {"products"}, allEntries = true), put = @CachePut(value = "productId", key = "#code"))
+    @Caching(evict = @CacheEvict(value = "products", allEntries = true), put = @CachePut(value = "productId", key = "#code"))
     public Product update(final Product productRequest, final Long code) {
-        productRequest.setCode(code);
-        return repository.save(productRequest);
+        return categoryRepository.findById(productRequest.getCategory().getCode())
+                .map(x -> {
+                    productRequest.setCode(code);
+                    return repository.save(productRequest);
+                })
+                .orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND + productRequest.getCategory().getCode()));
+
     }
 
     @Override

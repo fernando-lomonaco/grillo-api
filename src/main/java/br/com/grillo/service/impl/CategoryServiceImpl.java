@@ -1,6 +1,6 @@
 package br.com.grillo.service.impl;
 
-import br.com.grillo.model.entity.Category;
+import br.com.grillo.model.Category;
 import br.com.grillo.repository.CategoryRepository;
 import br.com.grillo.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +20,11 @@ import java.util.UUID;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository repository;
-    
+
     @Override
     @Cacheable(value = "categories", key = "#pageable.getPageNumber().toString()", unless = "#result==null or #result.isEmpty()")
     public Page<Category> all(String status, Pageable pageable) {
         return repository.findAll(pageable);
-    }
-
-    // @Cacheable(value = "findByStatus", key = "#status.concat('-').#pageable.getPageNumber().toString()", unless = "#result==null or #result.isEmpty()")
-    public Page<Category> findByStatus(String status, Pageable pageable) {
-        return repository.findByStatus(status.charAt(0), pageable);
     }
 
     @Override
@@ -39,14 +34,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @CacheEvict(value = {"categories"}, allEntries = true)
+    @CacheEvict(value = "categories", allEntries = true)
     public Category save(final Category categoryRequest) {
         return repository.save(categoryRequest);
     }
 
     @Override
     @Caching(put = @CachePut(value = "categoryId", key = "#code"),
-            evict = @CacheEvict(value = {"categories"}, allEntries = true))
+            evict = @CacheEvict(value = "categories", allEntries = true))
     public Category update(final Category categoryRequest, final Long code) {
         categoryRequest.setCode(code);
         return repository.save(categoryRequest);
