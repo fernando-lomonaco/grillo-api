@@ -1,13 +1,17 @@
-package br.com.grillo.model;
+package br.com.grillo.dto;
 
 import javax.validation.constraints.NotBlank;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginModel {
+@NoArgsConstructor
+@AllArgsConstructor
+public class LoginDTO {
 
 	@NotBlank(message = "Nome do usuário é obrigatório")
 	private String username;

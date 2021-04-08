@@ -1,5 +1,6 @@
 package br.com.grillo.exception;
 
+import br.com.grillo.dto.response.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CustomAccessUnauthorizeddHandler implements AuthenticationEntryPoint {
+public class CustomAccessUnauthorizedHandler implements AuthenticationEntryPoint {
 
     private final ObjectMapper mapper;
 

@@ -1,7 +1,7 @@
-package br.com.grillo.model;
+package br.com.grillo.dto;
 
-import br.com.grillo.model.entity.Finance;
-import br.com.grillo.model.enums.FinanceType;
+import br.com.grillo.model.Finance;
+import br.com.grillo.enums.FinanceType;
 import br.com.grillo.util.validator.EnumNamePattern;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -32,6 +33,7 @@ public class FinanceModel extends RepresentationModel<FinanceModel> {
     private PartnerModel partner;
     @NotNull(message = "Produto não pode ser vazio ou nulo")
     private ProductModel product;
+    private UUID externalCode;
 
     public Finance convertDTOToEntity() {
         return new ModelMapper().map(this, Finance.class);

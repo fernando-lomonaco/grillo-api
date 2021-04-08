@@ -14,33 +14,32 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import br.com.grillo.config.jwt.AuthTokenFilter;
+import br.com.grillo.filters.JwtAuthTokenFilter;
 import br.com.grillo.exception.CustomAccessDeniedHandler;
-import br.com.grillo.exception.CustomAccessUnauthorizeddHandler;
-import br.com.grillo.service.UserService;
+import br.com.grillo.exception.CustomAccessUnauthorizedHandler;
+import br.com.grillo.service.security.UserDetailsServiceImpl;
 
-// @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	UserService userService;
+    UserDetailsServiceImpl userDetailsServiceImpl;
 
 	@Autowired
-	private CustomAccessUnauthorizeddHandler unauthorizedHandler;
+	private CustomAccessUnauthorizedHandler unauthorizedHandler;
 
 	@Autowired
 	private CustomAccessDeniedHandler accessDeniedHandler;
 
 	@Bean
-	public AuthTokenFilter authenticationJwtTokenFilter() {
-		return new AuthTokenFilter();
+	public JwtAuthTokenFilter authenticationJwtTokenFilter() {
+		return new JwtAuthTokenFilter();
 	}
 
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-		authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
+		authenticationManagerBuilder.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
@@ -56,9 +55,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors()
+		http.csrf().disable()
+			.cors()
 			.and()
-			.csrf().disable()
 			.exceptionHandling()
 			.accessDeniedHandler(accessDeniedHandler)
 			.and()

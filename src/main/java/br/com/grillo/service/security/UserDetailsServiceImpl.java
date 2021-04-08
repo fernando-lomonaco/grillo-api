@@ -1,7 +1,7 @@
-package br.com.grillo.service;
+package br.com.grillo.service.impl;
 
 import br.com.grillo.config.jwt.UserDetailsImpl;
-import br.com.grillo.model.entity.Auth;
+import br.com.grillo.model.Auth;
 import br.com.grillo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,9 +14,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final  UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional

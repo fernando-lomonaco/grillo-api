@@ -1,4 +1,4 @@
-package br.com.grillo.model;
+package br.com.grillo.dto;
 
 import java.util.Set;
 

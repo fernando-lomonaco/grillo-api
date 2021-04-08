@@ -1,6 +1,6 @@
-package br.com.grillo.model;
+package br.com.grillo.dto;
 
-import br.com.grillo.model.entity.Product;
+import br.com.grillo.model.Category;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -15,34 +15,39 @@ import org.springframework.hateoas.server.core.Relation;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Relation(collectionRelation = "products")
-public class ProductModel extends RepresentationModel<ProductModel> {
+@Relation(collectionRelation = "categories")
+public class CategoryModel extends RepresentationModel<CategoryModel> {
 
     private Long code;
     @NotNull(message = "Nome não pode ser vazio ou nulo")
-    @Size(min = 3, max = 30, message = "Nome deve ter entre 3 a 30 caracteres")
+    @Size(min = 3, max = 40, message = "Nome deve ter entre 3 a 40 caracteres")
     private String name;
-    @NotNull(message = "Descricão não pode ser vazio ou nulo")
+    @NotNull(message = "Descrição não pode ser vazio ou nulo")
     @Size(min = 3, max = 80, message = "Descrição deve ter entre 3 a 80 caracteres")
     private String description;
     @NotNull(message = "Status não pode ser vazio ou nulo")
     private String status;
-    @NotNull(message = "Categoria não pode ser vazio ou nulo")
-    private CategoryModel category;
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", locale = "en-US", timezone = "Brazil/East")
     private LocalDateTime createdDate;
-    private String updatedDate;
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", locale = "en-US", timezone = "Brazil/East")
+    private LocalDateTime updatedDate;
+    private UUID externalCode;
 
-    public Product convertDTOToEntity() {
-        return new ModelMapper().map(this, Product.class);
+    public Category convertDTOToEntity() {
+        return new ModelMapper().map(this, Category.class);
     }
+
 }

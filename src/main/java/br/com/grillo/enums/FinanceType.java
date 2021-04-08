@@ -1,4 +1,4 @@
-package br.com.grillo.model.enums;
+package br.com.grillo.dto.enums;
 
 public enum FinanceType {
     REVENUE, 

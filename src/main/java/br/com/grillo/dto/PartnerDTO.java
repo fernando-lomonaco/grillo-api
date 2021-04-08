@@ -1,13 +1,19 @@
-package br.com.grillo.model;
+package br.com.grillo.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import br.com.grillo.model.entity.Partner;
+import br.com.grillo.model.Partner;
 import br.com.grillo.util.validator.ValidCNPJ;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import lombok.*;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.modelmapper.ModelMapper;
@@ -31,8 +37,15 @@ public class PartnerModel extends RepresentationModel<PartnerModel> {
     @ValidCNPJ(message = "Já existe um cadastro com esse CNPJ")
     @CNPJ(message = "Documento com formato inválido")
     private String document;
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", locale = "en-US", timezone = "Brazil/East")
     private LocalDateTime createdDate;
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", locale = "en-US", timezone = "Brazil/East")
     private LocalDateTime updatedDate;
+    private UUID externalCode;
 
     public Partner convertDTOToEntity() {
         return new ModelMapper().map(this, Partner.class);

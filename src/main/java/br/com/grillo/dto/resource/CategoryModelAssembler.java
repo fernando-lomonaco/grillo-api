@@ -22,6 +22,7 @@ public class CategoryModelAssembler extends RepresentationModelAssemblerSupport<
         categoryModel.setStatus(String.valueOf(category.getStatus()));
         categoryModel.setCreatedDate(category.getCreatedDate());
         categoryModel.setUpdatedDate(category.getUpdatedDate());
+        categoryModel.setExternalCode(category.getExternalCode());
 
         return categoryModel;
     }

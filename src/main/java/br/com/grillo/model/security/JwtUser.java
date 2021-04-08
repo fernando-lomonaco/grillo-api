@@ -12,21 +12,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.grillo.model.entity.Auth;
+import br.com.grillo.model.Auth;
 
 public class UserDetailsImpl implements UserDetails {
 
     private static final long serialVersionUID = 1L;
-
     private UUID code;
-
     private String username;
-
     private String email;
-
     @JsonIgnore
     private String password;
-
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(UUID code, String username, String email, String password,
@@ -41,7 +36,7 @@ public class UserDetailsImpl implements UserDetails {
     public static UserDetailsImpl build(Auth auth) {
         List<GrantedAuthority> authorities = auth.getRoles()
             .stream()
-            .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+            .map(role -> new SimpleGrantedAuthority(role.getRoleType().getValue()))
             .collect(Collectors.toList());
 
         return new UserDetailsImpl(
