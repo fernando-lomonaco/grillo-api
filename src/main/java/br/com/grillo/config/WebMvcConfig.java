@@ -19,12 +19,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public ModelMapper modelMapper() {
-        var modelMapper = new ModelMapper();
-        return modelMapper;
-    }
-
-    @Bean
     public ObjectMapper mapper() {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
