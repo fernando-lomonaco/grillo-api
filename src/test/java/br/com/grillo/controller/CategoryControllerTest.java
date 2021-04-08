@@ -1,8 +1,8 @@
 package br.com.grillo.controller;
 
-import br.com.grillo.model.CategoryModel;
-import br.com.grillo.model.entity.Category;
-import br.com.grillo.model.resource.CategoryModelAssembler;
+import br.com.grillo.dto.CategoryDTO;
+import br.com.grillo.dto.resource.CategoryModelAssembler;
+import br.com.grillo.model.Category;
 import br.com.grillo.service.CategoryService;
 import br.com.grillo.util.DateUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,9 +21,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.ParseException;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,18 +49,23 @@ class CategoryControllerTest {
     private HttpHeaders headers;
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    CategoryService categoryService;
+    private CategoryService categoryService;
 
     @Autowired
-    CategoryModelAssembler assembler;
+    private CategoryModelAssembler assembler;
 
     @BeforeAll
     void setUp() {
         headers = new HttpHeaders();
         headers.set("Authorization", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsb21vbmFjbyIsImlhdCI6MTYwMDk2Mzk0NiwiZXhwIjoxNjAxMDUwMzQ2fQ.MF6xpM8qFLqOb8yPi3nCppFdVMpADU4uZlLvTktJXZQtTQPnt2B_kAwBS8w17Xr6_nysmaxLPOpmrLOlbKaJ-Q");
+    }
+
+    @AfterAll
+    void tearDown() {
+        categoryService.delete(39L);
     }
 
     @Test
@@ -74,11 +81,12 @@ class CategoryControllerTest {
                 .contentType(MediaTypes.HAL_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.code").value(CODE))
-                .andExpect(jsonPath("$.description").value(DESCRIPTION))
-                .andExpect(jsonPath("$.status").value(STATUS))
-                .andExpect(jsonPath("$.createdDate").value(TRANSACTION_DATE))
-                .andExpect(jsonPath("$.updatedDate").value(TRANSACTION_DATE));
+                .andExpect(jsonPath("$.data.code").value(CODE))
+                .andExpect(jsonPath("$.data.description").value(DESCRIPTION))
+                .andExpect(jsonPath("$.data.status").value(STATUS))
+                .andExpect(jsonPath("$.data.externalCode").value(EXTERNAL_CODE))
+                .andExpect(jsonPath("$.data.createdDate").value(TRANSACTION_DATE))
+                .andExpect(jsonPath("$.data.updatedDate").value(TRANSACTION_DATE));
     }
 
     @Test
@@ -109,6 +117,26 @@ class CategoryControllerTest {
 
     }
 
+    @Test
+    @DisplayName("Teste da acao - capturar categoria com id")
+    @Order(3)
+    void getByCode() throws Exception {
+        Category category = getMockCategory();
+        BDDMockito.given(categoryService.get(category.getCode())).willReturn(Optional.of(category));
+
+        mockMvc.perform(get(URL + "/{code}", category.getCode()).content(getJsonPayload(category))
+                .contentType(MediaTypes.HAL_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.code").value(CODE))
+                .andExpect(jsonPath("$.data.description").value(DESCRIPTION))
+                .andExpect(jsonPath("$.data.status").value(STATUS))
+                .andExpect(jsonPath("$.data.externalCode").value(EXTERNAL_CODE))
+                .andExpect(jsonPath("$.data.createdDate").value(TRANSACTION_DATE))
+                .andExpect(jsonPath("$.data.updatedDate").value(TRANSACTION_DATE));
+    }
+
+
     private Category getMockCategory() throws ParseException {
 
         return Category.builder()
@@ -127,29 +155,12 @@ class CategoryControllerTest {
 
     private String getJsonPayload(Category category) throws JsonProcessingException {
 
-        CategoryModel model = assembler.toModel(category);
+        CategoryDTO model = assembler.toModel(category);
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return mapper.writeValueAsString(model);
     }
 
 
-    /*private CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
-    private Category categoryModel;
 
-    public CategoryControllerTest() {
-        categoryModel = new Category();
-        categoryModel.setCode(UUID.fromString("05ae9332-394f-4d6a-8823-2245f6d52bce"));
-        categoryModel.setName("Bebidas");
-        categoryModel.setDescription("Bebida sem alcool como Refrigerantes e Sucos");
-        categoryModel.setStatus('1');
-    }
-
-    @Test
-    public void shouldCreateCategory() throws Exception {
-        Category x = Mockito.spy(categoryModel);
-
-        when(categoryRepository.findById(UUID.randomUUID())).thenReturn(Optional.of(x));
-    }
-*/
 }

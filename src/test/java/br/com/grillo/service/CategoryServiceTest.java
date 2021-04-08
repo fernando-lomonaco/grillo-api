@@ -1,16 +1,20 @@
-package br.com.grillo.repository;
+package br.com.grillo.service;
 
 import br.com.grillo.model.Category;
+import br.com.grillo.repository.CategoryRepository;
 import br.com.grillo.util.DateUtils;
 import org.junit.jupiter.api.*;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -18,8 +22,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Transactional
-class CategoryRepositoryTest {
+class CategoryServiceTest {
 
     static final Long CODE = 39L;
     static final String NAME = "Bebidas";
@@ -29,14 +32,27 @@ class CategoryRepositoryTest {
     static final String EXTERNAL_CODE = "05ae9332-394f-4d6a-8823-2245f6d52bce";
 
     @Autowired
+    private CategoryService service;
+
+    @MockBean
     private CategoryRepository repository;
 
     @Test
-    @DisplayName("Teste repository salvar categoria")
     @Order(1)
     void testSave() throws ParseException {
 
-        Category category = Category.builder()
+        BDDMockito.given(repository.save(Mockito.any(Category.class)))
+                .willReturn(getMockCategory());
+        Category response = service.save(new Category());
+
+        assertNotNull(response);
+        assertEquals(39L, response.getCode());
+        assertEquals("Bebidas", response.getName());
+    }
+
+    private Category getMockCategory() throws ParseException {
+
+        return Category.builder()
                 .code(CODE)
                 .name(NAME)
                 .description(DESCRIPTION)
@@ -48,12 +64,10 @@ class CategoryRepositoryTest {
                 .externalCode(UUID.fromString(EXTERNAL_CODE))
                 .build();
 
-        Category response = repository.save(category);
-        assertNotNull(response);
     }
 
     @AfterAll
-    void tearDown() {
+    private void tearDown() {
         repository.deleteAll();
     }
 }
