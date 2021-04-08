@@ -1,4 +1,4 @@
-package br.com.grillo.exception;
+package br.com.grillo.filters;
 
 import br.com.grillo.dto.response.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CustomAccessUnauthorizedHandler implements AuthenticationEntryPoint {
+public class JwtAuthEntryPointFilter implements AuthenticationEntryPoint {
 
     private final ObjectMapper mapper;
 
