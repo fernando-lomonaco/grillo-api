@@ -1,27 +1,25 @@
-package br.com.grillo.model.resource;
+package br.com.grillo.dto.resource;
 
 import br.com.grillo.controller.AuthController;
-import br.com.grillo.model.AuthModel;
-import br.com.grillo.model.entity.Auth;
+import br.com.grillo.dto.AuthDTO;
+import br.com.grillo.model.Auth;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
-public class AuthModelAssembler extends RepresentationModelAssemblerSupport<Auth, AuthModel> {
+public class AuthModelAssembler extends RepresentationModelAssemblerSupport<Auth, AuthDTO> {
 
     public AuthModelAssembler() {
-        super(AuthController.class, AuthModel.class);
+        super(AuthController.class, AuthDTO.class);
     }
 
     @Override
-    public AuthModel toModel(Auth auth) {
-        AuthModel authModel = instantiateModel(auth);
-        authModel.setUsername(auth.getUsername());
-        authModel.setEmail(auth.getEmail());
-        authModel.setRole(auth.getRoles().stream().map(c -> c.getName().name()).collect(Collectors.toSet()));
-
-        return authModel;
+    public AuthDTO toModel(Auth auth) {
+        AuthDTO authDTO = instantiateModel(auth);
+        authDTO.setUsername(auth.getUsername());
+        authDTO.setPassword(auth.getPassword());
+        authDTO.setEmail(auth.getEmail());
+        authDTO.setRole(auth.getRole().getValue());
+        return authDTO;
     }
 }

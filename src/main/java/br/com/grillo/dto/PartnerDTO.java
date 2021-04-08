@@ -21,30 +21,34 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode(callSuper = true)
 @Relation(collectionRelation = "partners")
-public class PartnerModel extends RepresentationModel<PartnerModel> {
+public class PartnerDTO extends RepresentationModel<PartnerDTO> {
 
     private Long code;
-    @NotNull(message = "Nome não pode ser vazio ou nulo")
-    @Size(min = 3, max = 60, message = "Nome deve ter entre 3 a 60 caracteres")
+
+    @NotNull(message = "Nome não pode ser vazio ou nulo.")
+    @Size(min = 3, max = 60, message = "Nome deve ter entre 3 a 60 caracteres.")
     private String name;
-    @NotNull(message = "Documento não pode ser vazio ou nulo")
-    @ValidCNPJ(message = "Já existe um cadastro com esse CNPJ")
-    @CNPJ(message = "Documento com formato inválido")
+
+    @NotNull(message = "Documento não pode ser vazio ou nulo.")
+    @ValidCNPJ(message = "Já existe um cadastro com esse CNPJ.")
+    @CNPJ(message = "Documento com formato inválido.")
     private String document;
+
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", locale = "en-US", timezone = "Brazil/East")
     private LocalDateTime createdDate;
+
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS", locale = "en-US", timezone = "Brazil/East")
     private LocalDateTime updatedDate;
+
     private UUID externalCode;
 
     public Partner convertDTOToEntity() {

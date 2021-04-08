@@ -1,19 +1,19 @@
-package br.com.grillo.config.jwt;
+package br.com.grillo.dto.security;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class JwtResponse {
+public class JwtResponseDTO {
 
-    private String token;
-    @Builder.Default
-    private String type = "Bearer";
-    private String username;
+    private final String token;
+    private final String type;
+    private final String username;
+
+    public static JwtResponseDTO create(String token, String username) {
+        return new JwtResponseDTO(token, "Bearer", username);
+    }
 
 }

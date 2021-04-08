@@ -1,4 +1,4 @@
-package br.com.grillo.dto;
+package br.com.grillo.dto.security;
 
 import javax.validation.constraints.NotBlank;
 

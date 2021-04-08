@@ -1,46 +1,46 @@
-package br.com.grillo.model.resource;
+package br.com.grillo.dto.resource;
 
 import br.com.grillo.controller.CategoryController;
 import br.com.grillo.controller.ProductController;
-import br.com.grillo.model.CategoryModel;
-import br.com.grillo.model.ProductModel;
-import br.com.grillo.model.entity.Category;
-import br.com.grillo.model.entity.Product;
+import br.com.grillo.dto.CategoryDTO;
+import br.com.grillo.dto.ProductDTO;
+import br.com.grillo.model.Category;
+import br.com.grillo.model.Product;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class ProductModelAssembler extends RepresentationModelAssemblerSupport<Product, ProductModel> {
+public class ProductModelAssembler extends RepresentationModelAssemblerSupport<Product, ProductDTO> {
 
     public ProductModelAssembler() {
-        super(ProductController.class, ProductModel.class);
+        super(ProductController.class, ProductDTO.class);
     }
 
     @Override
-    public ProductModel toModel(Product product) {
-        ProductModel productModel = createModelWithId(product.getCode(), product);
-        productModel.setCode(product.getCode());
-        productModel.setName(product.getName());
-        productModel.setDescription(product.getDescription());
-        productModel.setStatus(String.valueOf(product.getStatus()));
-        productModel.setCreatedDate(product.getCreatedDate());
-        productModel.setUpdatedDate(String.valueOf(product.getUpdatedDate()));
-        productModel.setCategory(toCategoryModel(product.getCategory()));
-
-        productModel.add(linkTo(methodOn(ProductController.class).all(0, 20, product.getCategory().getCode(), "A", null)).withRel("products"));
-        productModel.add(linkTo(methodOn(CategoryController.class).get(product.getCategory().getCode()))
+    public ProductDTO toModel(Product product) {
+        ProductDTO productDTO = buildProductModel(product);
+        productDTO.add(linkTo(methodOn(ProductController.class).all(0, 20)).withRel("products"));
+        productDTO.add(linkTo(methodOn(CategoryController.class).get(product.getCategory().getCode()))
                 .withRel("category"));
+        productDTO.add((WebMvcLinkBuilder.linkTo(ProductController.class).slash(product.getCode())).withSelfRel());
 
-        return productModel;
+        return productDTO;
     }
 
-    private CategoryModel toCategoryModel(Category category) {
-        return CategoryModel.builder()
-                .code(category.getCode())
-                .name(category.getName())
+    private ProductDTO buildProductModel(Product product) {
+        return ProductDTO.builder()
+                .code(product.getCode())
+                .name(product.getName())
+                .description(product.getDescription())
+                .status(String.valueOf(product.getStatus()))
+                .createdDate(product.getCreatedDate())
+                .updatedDate(product.getUpdatedDate())
+                .externalCode(product.getExternalCode())
+                .categoryCode(product.getCategory().getCode())
                 .build();
     }
 

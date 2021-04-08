@@ -1,13 +1,15 @@
-package br.com.grillo.exception;
+package br.com.grillo.dto.response;
 
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @AllArgsConstructor
+@Builder
 @Getter
 public class ExceptionResponse {
 
