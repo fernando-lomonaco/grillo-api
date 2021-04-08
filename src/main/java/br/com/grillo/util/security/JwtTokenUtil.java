@@ -1,64 +1,105 @@
-package br.com.grillo.config.jwt;
+package br.com.grillo.util.security;
 
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
-
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
-public class JwtUtils {
+public class JwtTokenUtil {
 
-	@Value("${grillo.app.jwtSecret}")
-	private String jwtSecret;
+    private static final String CLAIM_KEY_USERNAME = "sub";
+    private static final String CLAIM_KEY_ROLE = "role";
+    private static final String CLAIM_KEY_CREATED = "created";
 
-	@Value("${grillo.app.jwtExpirationMs}")
-	private int jwtExpirationMs;
+    @Value("${grillo.app.jwtSecret}")
+    private String jwtSecret;
 
-	public String generateJwtToken(Authentication authentication) {
+    @Value("${grillo.app.jwtExpirationMs}")
+    private Long jwtExpirationMs;
 
-		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+    public String getUsernameFromToken(String token) {
+        String username;
+        try {
+            Claims claims = getClaimsFromToken(token);
+            username = claims != null ? claims.getSubject() : null;
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature: {}", e.getMessage());
+            username = null;
+        }
+        return username;
+    }
 
-		return Jwts.builder()
-				.setSubject((userPrincipal.getUsername()))
-				.setIssuedAt(new Date())
-				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-				.signWith(SignatureAlgorithm.HS512, jwtSecret)
-				.compact();
-	}
+    public Date getExpirationDateFromToken(String token) {
+        Date expiration;
+        try {
+            Claims claims = getClaimsFromToken(token);
+            expiration = claims != null ? claims.getExpiration() : null;
+        } catch (Exception e) {
+            log.error("JWT token is expired: {}", e.getMessage());
+            expiration = null;
+        }
+        return expiration;
+    }
 
-	public String getUserNameFromJwtToken(String token) {
-		return Jwts.parser()
-			.setSigningKey(jwtSecret)
-			.parseClaimsJws(token)
-			.getBody()
-			.getSubject();
-	}
+    public boolean validToken(String token) {
+        return !expiredToken(token);
+    }
 
-	public boolean validateJwtToken(String authToken) {
-		try {
-			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-			return true;
-		} catch (SignatureException e) {
-			log.error("Invalid JWT signature: {}", e.getMessage());
-		} catch (MalformedJwtException e) {
-			log.error("Invalid JWT token: {}", e.getMessage());
-		} catch (ExpiredJwtException e) {
-			log.error("JWT token is expired: {}", e.getMessage());
-		} catch (UnsupportedJwtException e) {
-			log.error("JWT token is unsupported: {}", e.getMessage());
-		} catch (IllegalArgumentException e) {
-			log.error("JWT claims string is empty: {}", e.getMessage());
-		}
-		return false;
-	}
+    public String getToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+        claims.put(CLAIM_KEY_CREATED, new Date());
+        userDetails.getAuthorities().forEach(authority -> claims.put(CLAIM_KEY_ROLE, authority.getAuthority()));
+        return generateToken(claims);
+    }
+
+    public String getToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_USERNAME, username);
+        claims.put(CLAIM_KEY_CREATED, new Date());
+        return generateToken(claims);
+    }
+
+
+    public String generateToken(Map<String, Object> claims) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(generateExpirationDate())
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
+
+    private Claims getClaimsFromToken(String token) throws AuthenticationException {
+        Claims claims;
+        try {
+            claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        } catch (Exception e) {
+            claims = null;
+        }
+        return claims;
+    }
+
+    private Date generateExpirationDate() {
+        return new Date(System.currentTimeMillis() + jwtExpirationMs * 1000);
+    }
+
+    private boolean expiredToken(String token) {
+        Date expirationDate = this.getExpirationDateFromToken(token);
+        if (expirationDate == null) {
+            return false;
+        }
+        return expirationDate.before(new Date());
+    }
 }

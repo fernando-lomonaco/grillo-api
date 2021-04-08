@@ -1,10 +1,10 @@
 package br.com.grillo.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constants {
+
+    private Constants() {
+        throw new AssertionError("Class nao pode ser instanciada");
+    }
 
     public static final String CATEGORY_NOT_FOUND = "Categoria não encontrada: ";
     public static final String FINANCE_NOT_FOUND = "Financeiro não encontrado: ";
