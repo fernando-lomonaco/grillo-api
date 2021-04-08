@@ -1,122 +1,83 @@
 package br.com.grillo.controller;
 
-import br.com.grillo.config.jwt.JwtResponse;
-import br.com.grillo.config.jwt.JwtUtils;
-import br.com.grillo.config.jwt.UserDetailsImpl;
-import br.com.grillo.model.AuthModel;
-import br.com.grillo.model.LoginModel;
-import br.com.grillo.model.entity.Auth;
-import br.com.grillo.model.entity.Role;
-import br.com.grillo.model.enums.RoleType;
-import br.com.grillo.repository.RoleRepository;
-import br.com.grillo.repository.UserRepository;
+import br.com.grillo.dto.AuthDTO;
+import br.com.grillo.dto.resource.AuthModelAssembler;
+import br.com.grillo.dto.response.Response;
+import br.com.grillo.dto.security.JwtResponseDTO;
+import br.com.grillo.dto.security.LoginDTO;
+import br.com.grillo.model.Auth;
+import br.com.grillo.service.UserService;
+import br.com.grillo.util.security.JwtTokenUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
+@Tag(name = "API Auth", description = "Routes of auth")
 @RequestMapping("auth")
 public class AuthController {
 
-    private static final String MESSAGE_ERROR = "Error: Role is not found.";
+    @Autowired
+    private AuthModelAssembler assembler;
 
     @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
+    UserService service;
 
     @Autowired
-    RoleRepository roleRepository;
+    JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
+    private UserDetailsService userDetailsService;
 
     @PostMapping("signin")
-    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginModel loginModel) {
-
+    public ResponseEntity<Response<JwtResponseDTO>> authenticateUser(@Valid @RequestBody LoginDTO loginDTO) {
+        Response<JwtResponseDTO> response = new Response<>();
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginModel.getUsername(), loginModel.getPassword()));
-
+                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.getUsername());
+        String jwt = jwtTokenUtil.getToken(userDetails);
 
-        JwtResponse jwtResponse = JwtResponse.builder()
-                .token(jwt)
-                .code(userDetails.getCode())
-                .username(userDetails.getUsername())
-                .email(userDetails.getEmail())
-                .roles(roles)
-                .build();
-
-        return ResponseEntity.ok(jwtResponse);
+        response.setData(JwtResponseDTO.create(jwt, userDetails.getUsername()));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("signup")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody AuthModel authModel) {
+    public ResponseEntity<Response<AuthDTO>> registerUser(@Valid @RequestBody AuthDTO authDTO) {
+        Response<AuthDTO> response = new Response<>();
 
-        if (userRepository.existsByUsername(authModel.getUsername())) {
-            return ResponseEntity.badRequest().body("Error: Username is already taken!");
-        } else if (userRepository.existsByEmail(authModel.getEmail())) {
-            return ResponseEntity.badRequest().body("Error: Email is already in use!");
+        Boolean existsUsername = service.existsByUsername(authDTO.getUsername());
+        Boolean existsEmail = service.existsByEmail(authDTO.getEmail());
+
+        if (Boolean.TRUE.equals(existsUsername)) {
+            response.addErrorMsgToResponse("Aviso: Usuario ja existe.");
+            return ResponseEntity.badRequest().body(response);
+        } else if (Boolean.TRUE.equals(existsEmail)) {
+            response.addErrorMsgToResponse("Aviso: E-mail ja esta em uso.");
+            return ResponseEntity.badRequest().body(response);
         }
 
-        Auth auth = new Auth(
-                authModel.getUsername(),
-                authModel.getEmail(),
-                encoder.encode(authModel.getPassword())
-        );
-
-        Set<String> strRoles = authModel.getRole();
-        Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(RoleType.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException(MESSAGE_ERROR));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(RoleType.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException(MESSAGE_ERROR));
-                        roles.add(adminRole);
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByName(RoleType.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException(MESSAGE_ERROR));
-                        roles.add(userRole);
-                }
-            });
-        }
-
-        auth.setRoles(roles);
-        userRepository.save(auth);
-
-        return ResponseEntity.ok("User registered successfully!");
+        final Auth auth = authDTO.convertDTOToEntity();
+        AuthDTO model = assembler.toModel(service.save(auth));
+        response.setData(model);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 }

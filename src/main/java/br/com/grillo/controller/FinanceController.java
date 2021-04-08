@@ -1,9 +1,9 @@
 package br.com.grillo.controller;
 
+import br.com.grillo.dto.FinanceDTO;
+import br.com.grillo.dto.resource.FinanceModelAssembler;
 import br.com.grillo.exception.EntityNotFoundException;
-import br.com.grillo.model.FinanceModel;
-import br.com.grillo.model.entity.Finance;
-import br.com.grillo.model.resource.FinanceModelAssembler;
+import br.com.grillo.model.Finance;
 import br.com.grillo.service.FinanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,32 +23,32 @@ import javax.validation.Valid;
 import static br.com.grillo.util.Constants.FINANCE_NOT_FOUND;
 
 @RestController
-@Tag(name = "Finance", description = "Finance controller")
+@Tag(name = "API Finance", description = "Routes of finances")
 @RequestMapping("finances")
 public class FinanceController {
 
     private final FinanceService service;
     private final FinanceModelAssembler assembler;
+    private final PagedResourcesAssembler<Finance> pagedAssembler;
 
-    public FinanceController(FinanceService service, FinanceModelAssembler assembler) {
+    public FinanceController(FinanceService service, FinanceModelAssembler assembler, PagedResourcesAssembler<Finance> pagedAssembler) {
         this.service = service;
         this.assembler = assembler;
+        this.pagedAssembler = pagedAssembler;
     }
 
     @Operation(summary = "Get all finances")
-    @ApiResponse(responseCode = "200", description = "Case the search ha been succeeded")
-    @ApiResponse(responseCode = "404", description = "Case the search has been failure")
+    @ApiResponse(responseCode = "200", description = "Case the search has been succeeded")
+    @ApiResponse(responseCode = "404", description = "Case the search has been failed")
     @GetMapping
-    public ResponseEntity<PagedModel<FinanceModel>> all(
+    public ResponseEntity<PagedModel<FinanceDTO>> all(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(value = "size", defaultValue = "20", required = false) int size,
-            @RequestParam(value = "product", defaultValue = "", required = false) Long productCode,
-            @RequestParam(value = "partner", defaultValue = "", required = false) String partner,
-            PagedResourcesAssembler<Finance> pagedAssembler) {
+            @RequestParam(value = "size", defaultValue = "20", required = false) int size
+    ) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<Finance> finances = service.all(productCode, partner, pageable);
-        PagedModel<FinanceModel> pagedModel = pagedAssembler.toModel(finances, assembler);
+        Page<Finance> finances = service.all(pageable);
+        PagedModel<FinanceDTO> pagedModel = pagedAssembler.toModel(finances, assembler);
         return new ResponseEntity<>(pagedModel, HttpStatus.OK);
     }
 
@@ -56,7 +56,7 @@ public class FinanceController {
     @ApiResponse(responseCode = "200", description = "Case the finance has been found")
     @ApiResponse(responseCode = "404", description = "Case the finance has not been found")
     @GetMapping("{code}")
-    public ResponseEntity<FinanceModel> get(@PathVariable final Long code) {
+    public ResponseEntity<FinanceDTO> get(@PathVariable final Long code) {
         return service.get(code).map(assembler::toModel).map(ResponseEntity::ok)
                 .orElseThrow(() -> new EntityNotFoundException(FINANCE_NOT_FOUND + code));
     }
@@ -64,10 +64,10 @@ public class FinanceController {
     @Operation(summary = "Create a finance")
     @ApiResponse(responseCode = "201", description = "Case the finance has been created")
     @PostMapping
-    public ResponseEntity<FinanceModel> post(@Valid @RequestBody FinanceModel financeModel) {
+    public ResponseEntity<FinanceDTO> post(@Valid @RequestBody FinanceDTO financeDTO) {
 
-        final Finance finance = financeModel.convertDTOToEntity();
-        FinanceModel model = assembler.toModel(service.save(finance));
+        final Finance finance = financeDTO.convertDTOToEntity();
+        FinanceDTO model = assembler.toModel(service.save(finance));
         return new ResponseEntity<>(model, HttpStatus.CREATED);
     }
 
@@ -75,11 +75,11 @@ public class FinanceController {
     @ApiResponse(responseCode = "200", description = "Case the finance has been found and updated")
     @ApiResponse(responseCode = "404", description = "Case the finance has not been found")
     @PutMapping("{code}")
-    public ResponseEntity<FinanceModel> put(@PathVariable final Long code,
-                                            @Valid @RequestBody FinanceModel financeModel) {
+    public ResponseEntity<FinanceDTO> put(@PathVariable final Long code,
+                                          @Valid @RequestBody FinanceDTO financeDTO) {
         return service.get(code).map(map -> {
-            Finance finance = financeModel.convertDTOToEntity();
-            FinanceModel model = assembler.toModel(service.update(finance, code));
+            Finance finance = financeDTO.convertDTOToEntity();
+            FinanceDTO model = assembler.toModel(service.update(finance, code));
             return new ResponseEntity<>(model, HttpStatus.OK);
         }).orElseThrow(() -> new EntityNotFoundException(FINANCE_NOT_FOUND + code));
     }
