@@ -1,31 +1,24 @@
-package br.com.grillo.config.jwt;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
+package br.com.grillo.model.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.grillo.model.Auth;
+import java.util.Collection;
 
-public class UserDetailsImpl implements UserDetails {
+public class JwtUser implements UserDetails {
 
-    private static final long serialVersionUID = 1L;
-    private UUID code;
-    private String username;
-    private String email;
+    private static final long serialVersionUID = 8931103427654845516L;
+
+    private final Long code;
+    private final String username;
+    private final String email;
     @JsonIgnore
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
+    private final String password;
+    private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(UUID code, String username, String email, String password,
-            Collection<? extends GrantedAuthority> authorities) {
+    public JwtUser(Long code, String username, String email, String password,
+                   Collection<? extends GrantedAuthority> authorities) {
         this.code = code;
         this.username = username;
         this.email = email;
@@ -33,26 +26,12 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserDetailsImpl build(Auth auth) {
-        List<GrantedAuthority> authorities = auth.getRoles()
-            .stream()
-            .map(role -> new SimpleGrantedAuthority(role.getRoleType().getValue()))
-            .collect(Collectors.toList());
-
-        return new UserDetailsImpl(
-                auth.getCode(),
-                auth.getUsername(),
-                auth.getEmail(),
-                auth.getPassword(),
-                authorities);
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
 
-    public UUID getCode() {
+    public Long getCode() {
         return code;
     }
 
@@ -88,16 +67,6 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		UserDetailsImpl user = (UserDetailsImpl) o;
-		return Objects.equals(code, user.code);
     }
 
 }

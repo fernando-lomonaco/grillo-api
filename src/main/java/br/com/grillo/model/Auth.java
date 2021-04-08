@@ -1,63 +1,41 @@
-package br.com.grillo.model.entity;
+package br.com.grillo.model;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
+import br.com.grillo.enums.RoleType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+import javax.persistence.*;
+import java.io.Serializable;
+
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "mn_user", uniqueConstraints = { 
-		@UniqueConstraint(columnNames = "username"),
-		@UniqueConstraint(columnNames = "email") 
-	})
-public class Auth {
+@Entity
+@Table(name = "mn_user", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email")
+})
+public class Auth implements Serializable {
 
-	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
-    private UUID code;
-	
-	@NotBlank
-	@Size(max = 20)
-	private String username;
+    private static final long serialVersionUID = -6902359700058457075L;
 
-	@NotBlank
-	@Size(max = 50)
-	@Email
-	private String email;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long code;
 
-	@NotBlank
-	@Size(max = 120)
-	private String password;
+    @Column(nullable = false)
+    private String username;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_code"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles = new HashSet<>();
+    @Column(nullable = false)
+    private String email;
 
-	public Auth(String username, String email, String password) {
-		this.username = username;
-		this.email = email;
-		this.password = password;
-	}
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private RoleType role;
+
 }

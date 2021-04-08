@@ -1,4 +1,4 @@
-package br.com.grillo.model.entity;
+package br.com.grillo.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import br.com.grillo.model.enums.FinanceType;
+import br.com.grillo.enums.FinanceType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

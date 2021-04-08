@@ -1,4 +1,4 @@
-package br.com.grillo.model.entity;
+package br.com.grillo.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
