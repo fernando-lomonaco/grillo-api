@@ -38,6 +38,7 @@ class CategoryServiceTest {
     private CategoryRepository repository;
 
     @Test
+    @DisplayName("Teste service salvar categoria")
     @Order(1)
     void testSave() throws ParseException {
 

@@ -25,8 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,6 +81,7 @@ class CategoryControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.code").value(CODE))
+                .andExpect(jsonPath("$.data.name").value(NAME))
                 .andExpect(jsonPath("$.data.description").value(DESCRIPTION))
                 .andExpect(jsonPath("$.data.status").value(STATUS))
                 .andExpect(jsonPath("$.data.externalCode").value(EXTERNAL_CODE))
@@ -129,13 +129,13 @@ class CategoryControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.code").value(CODE))
+                .andExpect(jsonPath("$.data.name").value(NAME))
                 .andExpect(jsonPath("$.data.description").value(DESCRIPTION))
                 .andExpect(jsonPath("$.data.status").value(STATUS))
                 .andExpect(jsonPath("$.data.externalCode").value(EXTERNAL_CODE))
                 .andExpect(jsonPath("$.data.createdDate").value(TRANSACTION_DATE))
                 .andExpect(jsonPath("$.data.updatedDate").value(TRANSACTION_DATE));
     }
-
 
     private Category getMockCategory() throws ParseException {
 
