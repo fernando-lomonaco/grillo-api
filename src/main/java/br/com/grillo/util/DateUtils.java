@@ -8,11 +8,11 @@ import java.util.Date;
 
 public class DateUtils {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-
     private DateUtils() {
-        throw new AssertionError("Class " + this.getClass().getName() + " can't be instantiated");
+        throw new AssertionError("Classenao pode ser instanciada");
     }
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     public static LocalDateTime getLocalDateTimeFromString(String dateAsString) throws ParseException {
         SimpleDateFormat inputFormat = new SimpleDateFormat(DATE_FORMAT);

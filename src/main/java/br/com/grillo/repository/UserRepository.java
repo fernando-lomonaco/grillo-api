@@ -3,7 +3,7 @@ package br.com.grillo.repository;
 import java.util.Optional;
 import java.util.UUID;
 
-import br.com.grillo.model.entity.Auth;
+import br.com.grillo.model.Auth;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

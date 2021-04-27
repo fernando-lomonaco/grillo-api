@@ -16,16 +16,17 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @OpenAPIDefinition(
   info = @Info(
   title = "Grillo API",
+  version = "0.0.3",
   description = "" +
-    "Lorem ipsum dolor ...",
+    "Services grillo api",
   contact = @Contact(
     name = "Lomonaco", 
     email = "fernando_lomonaco@outlook.com"
   )),
-  servers = @Server(url = "http://localhost:8080")
+  servers = @Server(url = "http://localhost:8087")
 )
 @SecurityScheme(
-  name = "api",   
+  name = "api",
   scheme = "bearer",
   bearerFormat = "JWT",
   type = SecuritySchemeType.HTTP,

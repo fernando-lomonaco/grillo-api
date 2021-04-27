@@ -1,9 +1,9 @@
 package br.com.grillo.controller;
 
 import br.com.grillo.exception.EntityNotFoundException;
-import br.com.grillo.model.AuthModel;
-import br.com.grillo.model.resource.AuthModelAssembler;
-import br.com.grillo.service.UserService;
+import br.com.grillo.dto.AuthDTO;
+import br.com.grillo.dto.resource.AuthModelAssembler;
+import br.com.grillo.service.security.UserDetailsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +20,17 @@ import static br.com.grillo.util.Constants.USER_NOT_FOUND;
 @RequestMapping("users")
 public class UserController {
 
-    private final UserService service;
+    private final UserDetailsServiceImpl service;
     private final AuthModelAssembler assembler;
 
-    public UserController(UserService service, AuthModelAssembler assembler) {
+    public UserController(UserDetailsServiceImpl service, AuthModelAssembler assembler) {
         this.service = service;
         this.assembler = assembler;
     }
 
     @Operation(summary = "Get user authenticated")
     @GetMapping("me")
-    public ResponseEntity<AuthModel> getUser(Principal principal) {
+    public ResponseEntity<AuthDTO> getUser(Principal principal) {
         return service.findByUsername(principal.getName()).map(assembler::toModel).map(ResponseEntity::ok)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + principal.getName()));
     }

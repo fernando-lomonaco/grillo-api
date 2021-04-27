@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidCNPJ {
 
-    String message() default "Valor inválido";
+    String message() default "Documento inválido.";
 
     Class<?>[] groups() default {};
 

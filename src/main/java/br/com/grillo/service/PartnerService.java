@@ -1,6 +1,6 @@
 package br.com.grillo.service;
 
-import br.com.grillo.model.entity.Partner;
+import br.com.grillo.model.Partner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,9 +14,9 @@ public interface PartnerService {
 
     Optional<Partner> get(Long code);
 
-    Partner update(Partner partner, Long code);
+    Optional<Partner> findByDocument(String document);
 
-    Optional<String> findByDocument(String cnpj);
+    Partner update(Partner partner, Long code);
 
     void delete(Long code);
 }

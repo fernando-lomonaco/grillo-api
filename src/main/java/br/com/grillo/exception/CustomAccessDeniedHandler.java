@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.grillo.dto.response.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
-            AccessDeniedException accessDeniedException) throws IOException, ServletException {
+            AccessDeniedException accessDeniedException) throws IOException {
         log.error("Forbidden: {}", accessDeniedException.getMessage());
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);

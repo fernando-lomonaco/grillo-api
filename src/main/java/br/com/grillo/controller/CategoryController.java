@@ -1,9 +1,10 @@
 package br.com.grillo.controller;
 
+import br.com.grillo.dto.response.Response;
 import br.com.grillo.exception.EntityNotFoundException;
-import br.com.grillo.model.CategoryModel;
-import br.com.grillo.model.entity.Category;
-import br.com.grillo.model.resource.CategoryModelAssembler;
+import br.com.grillo.dto.CategoryDTO;
+import br.com.grillo.model.Category;
+import br.com.grillo.dto.resource.CategoryModelAssembler;
 import br.com.grillo.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,10 +21,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.UUID;
+
 import static br.com.grillo.util.Constants.CATEGORY_NOT_FOUND;
 
 @RestController
-@Tag(name = "Category", description = "Category controller")
+@Tag(name = "API Category", description = "Routes of categories")
 @RequestMapping("categories")
 public class CategoryController {
 
@@ -36,52 +39,69 @@ public class CategoryController {
     }
 
     @Operation(summary = "Get all categories")
-    @ApiResponse(responseCode = "200", description = "Case the search ha been succeeded")
-    @ApiResponse(responseCode = "404", description = "Case the search has been failure")
+    @ApiResponse(responseCode = "200", description = "Case the search has been succeeded")
+    @ApiResponse(responseCode = "404", description = "Case the search has been failed")
     @GetMapping
-    public ResponseEntity<PagedModel<CategoryModel>> all(
+    public ResponseEntity<Response<PagedModel<CategoryDTO>>> all(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "20", required = false) int size,
             @RequestParam(value = "status", defaultValue = "", required = false) String status,
             PagedResourcesAssembler<Category> pagedAssembler) {
 
+        Response<PagedModel<CategoryDTO>> response = new Response<>();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<Category> categories = service.all(status, pageable);
 
-        PagedModel<CategoryModel> pagedModel = pagedAssembler.toModel(categories, assembler);
-        return new ResponseEntity<>(pagedModel, HttpStatus.OK);
+        PagedModel<CategoryDTO> pagedModel = pagedAssembler.toModel(categories, assembler);
+        response.setData(pagedModel);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "Get a category by its code")
     @ApiResponse(responseCode = "200", description = "Case the category has been found")
     @ApiResponse(responseCode = "404", description = "Case the category has not been found")
     @GetMapping("{code}")
-    public ResponseEntity<CategoryModel> get(@PathVariable final Long code) {
-        return service.get(code).map(assembler::toModel).map(ResponseEntity::ok)
-                .orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND + code));
+    public ResponseEntity<Response<CategoryDTO>> get(@PathVariable final Long code) {
+        Response<CategoryDTO> response = new Response<>();
+
+        return service.get(code)
+                .map(map -> {
+                    CategoryDTO model = assembler.toModel(map);
+                    response.setData(model);
+                    return ResponseEntity.ok().body(response);
+                }).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND + code));
     }
 
     @Operation(summary = "Create a category")
     @ApiResponse(responseCode = "201", description = "Case the category has been created")
     @PostMapping
-    public ResponseEntity<CategoryModel> post(@Valid @RequestBody CategoryModel categoryModel) {
+    public ResponseEntity<Response<CategoryDTO>> post(@Valid @RequestBody CategoryDTO categoryDTO) {
 
-        final Category category = categoryModel.convertDTOToEntity();
-        CategoryModel model = assembler.toModel(service.save(category));
-        return new ResponseEntity<>(model, HttpStatus.CREATED);
+        Response<CategoryDTO> response = new Response<>();
+        final Category category = categoryDTO.convertDTOToEntity();
+        category.setExternalCode(UUID.randomUUID());
+        CategoryDTO model = assembler.toModel(service.save(category));
+        response.setData(model);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update a category by its code")
     @ApiResponse(responseCode = "200", description = "Case the category has been found and updated")
     @ApiResponse(responseCode = "404", description = "Case the category has not been found")
     @PutMapping("{code}")
-    public ResponseEntity<CategoryModel> update(@PathVariable final Long code,
-            @Valid @RequestBody CategoryModel categoryModel) {
-        return service.get(code).map(map -> {
-            Category category = categoryModel.convertDTOToEntity();
-            CategoryModel model = assembler.toModel(service.update(category, code));
-            return new ResponseEntity<>(model, HttpStatus.OK);
-        }).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND + code));
+    public ResponseEntity<Response<CategoryDTO>> update(@PathVariable final Long code,
+                                                        @Valid @RequestBody CategoryDTO categoryDTO) {
+
+        Response<CategoryDTO> response = new Response<>();
+        return service.get(code)
+                .map(c -> {
+                    Category category = categoryDTO.convertDTOToEntity();
+                    category.setExternalCode(c.getExternalCode());
+                    CategoryDTO model = assembler.toModel(service.update(category, code));
+                    response.setData(model);
+                    return ResponseEntity.ok().body(response);
+                }).orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND + code));
     }
 
 }

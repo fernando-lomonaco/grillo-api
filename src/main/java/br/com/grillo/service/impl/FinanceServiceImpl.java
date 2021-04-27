@@ -1,6 +1,6 @@
 package br.com.grillo.service.impl;
 
-import br.com.grillo.model.entity.Finance;
+import br.com.grillo.model.Finance;
 import br.com.grillo.repository.FinanceRepository;
 import br.com.grillo.service.FinanceService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,21 +22,9 @@ public class FinanceServiceImpl implements FinanceService {
     private final FinanceRepository repository;
 
     @Override
-    public Page<Finance> all(Long productCode, String partner, Pageable pageable) {
-        if (productCode == null && partner.isEmpty()) {
-            return this.findAll(pageable);
-        }
-        return this.findByProductCode(productCode, partner, pageable);
-    }
-
     @Cacheable(value = "finances", key = "#pageable.getPageNumber().toString()", unless = "#result==null or #result.isEmpty()")
-    public Page<Finance> findAll(Pageable pageable) {
+    public Page<Finance> all(Pageable pageable) {
         return repository.findAll(pageable);
-    }
-
-    @Cacheable(value = "financesByProductOrPartner", unless = "#result==null or #result.isEmpty()", key = "#product.concat('-').concat(#partner).concat('-').concat(#pageable.getPageNumber().toString())")
-    public Page<Finance> findByProductCode(Long productCode, String partner, Pageable pageable) {
-        return repository.findByProductCode(productCode, pageable);
     }
 
     @Override
@@ -47,6 +36,7 @@ public class FinanceServiceImpl implements FinanceService {
     @Override
     @CacheEvict(value = {"finances", "financesByProductOrPartner"}, allEntries = true)
     public Finance save(final Finance financeRequest) {
+        financeRequest.setExternalCode(UUID.randomUUID());
         return repository.save(financeRequest);
     }
 

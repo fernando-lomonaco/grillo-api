@@ -1,11 +1,10 @@
 package br.com.grillo.service;
 
-import java.util.Optional;
-
+import br.com.grillo.model.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import br.com.grillo.model.entity.Category;
+import java.util.Optional;
 
 public interface CategoryService {
 

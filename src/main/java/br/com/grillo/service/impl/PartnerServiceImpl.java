@@ -1,7 +1,6 @@
 package br.com.grillo.service.impl;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import br.com.grillo.service.PartnerService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -12,7 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.grillo.model.entity.Partner;
+import br.com.grillo.model.Partner;
 import br.com.grillo.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +28,12 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
-    @Cacheable(value = "partnerId", key = "#code")
+    public Optional<Partner> findByDocument(final String document) {
+        return repository.findByDocument(document);
+    }
+
+    @Override
+    @Cacheable(value = "partnerId", key = "#code", unless = "#result==null")
     public Optional<Partner> get(final Long code) {
         return repository.findById(code);
     }
@@ -45,11 +49,6 @@ public class PartnerServiceImpl implements PartnerService {
     public Partner update(final Partner partnerRequest, final Long code) {
         partnerRequest.setCode(code);
         return repository.save(partnerRequest);
-    }
-
-    @Override
-    public Optional<String> findByDocument(String document) {
-        return repository.findByDocument(document);
     }
 
     @Override
