@@ -3,7 +3,7 @@ package br.com.grillo.util;
 public class Constants {
 
     private Constants() {
-        throw new AssertionError("Class nao pode ser instanciada");
+        throw new AssertionError("Classe nao pode ser instanciada");
     }
 
     public static final String CATEGORY_NOT_FOUND = "Categoria não encontrada: ";

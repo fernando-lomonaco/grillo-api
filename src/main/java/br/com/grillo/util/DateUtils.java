@@ -9,7 +9,7 @@ import java.util.Date;
 public class DateUtils {
 
     private DateUtils() {
-        throw new AssertionError("Class nao pode ser instanciada");
+        throw new AssertionError("Classenao pode ser instanciada");
     }
 
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
