@@ -11,7 +11,6 @@ public class UniqueCNPJValidator implements ConstraintValidator<ValidCNPJ, Strin
     @Autowired
     private PartnerService partnerService;
 
-
     @Override
     public void initialize(ValidCNPJ constraintAnnotation) {
         constraintAnnotation.message();
@@ -19,6 +18,6 @@ public class UniqueCNPJValidator implements ConstraintValidator<ValidCNPJ, Strin
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return !partnerService.findByDocument(value).isPresent();
+        return partnerService.findByDocument(value).isEmpty();
     }
 }

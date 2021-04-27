@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
@@ -96,10 +97,7 @@ public class JwtTokenUtil {
     }
 
     private boolean expiredToken(String token) {
-        Date expirationDate = this.getExpirationDateFromToken(token);
-        if (expirationDate == null) {
-            return false;
-        }
+        @NonNull Date expirationDate = this.getExpirationDateFromToken(token);
         return expirationDate.before(new Date());
     }
 }
