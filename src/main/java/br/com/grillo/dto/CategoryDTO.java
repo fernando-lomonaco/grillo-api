@@ -20,7 +20,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Relation(collectionRelation = "categories")
 public class CategoryDTO extends RepresentationModel<CategoryDTO> {
 

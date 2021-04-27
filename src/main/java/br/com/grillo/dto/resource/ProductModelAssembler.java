@@ -2,9 +2,7 @@ package br.com.grillo.dto.resource;
 
 import br.com.grillo.controller.CategoryController;
 import br.com.grillo.controller.ProductController;
-import br.com.grillo.dto.CategoryDTO;
 import br.com.grillo.dto.ProductDTO;
-import br.com.grillo.model.Category;
 import br.com.grillo.model.Product;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;

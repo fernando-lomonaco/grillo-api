@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 import br.com.grillo.model.Partner;
 import br.com.grillo.util.validator.ValidCNPJ;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;

@@ -18,6 +18,7 @@ public class PartnerModelAssembler extends RepresentationModelAssemblerSupport<P
     public PartnerDTO toModel(Partner partner) {
         PartnerDTO partnerDTO = buildPartnerModel(partner);
         partnerDTO.add((WebMvcLinkBuilder.linkTo(PartnerController.class).slash(partner.getCode())).withSelfRel());
+        partnerDTO.add((WebMvcLinkBuilder.linkTo(PartnerController.class).slash("document/"+partner.getDocument())).withSelfRel());
         return partnerDTO;
     }
 
