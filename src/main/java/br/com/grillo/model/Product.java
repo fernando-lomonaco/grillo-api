@@ -25,6 +25,7 @@ public class Product implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter
     private Long code;
 
     @Column(nullable = false)
@@ -43,11 +44,12 @@ public class Product implements Serializable {
     @Column(nullable = false)
     private char status;
 
-    @JoinColumn(name = "category_code", referencedColumnName = "code")
+    @JoinColumn(name = "category_code", referencedColumnName = "code", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
     @Column(columnDefinition = "BINARY(16)", nullable = false, updatable = false)
+    @Setter
     private UUID externalCode;
 
 }

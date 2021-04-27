@@ -35,6 +35,7 @@ public class Auth implements Serializable {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private RoleType role;
 
