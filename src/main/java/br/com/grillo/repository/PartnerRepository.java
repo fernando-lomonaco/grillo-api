@@ -9,5 +9,6 @@ import br.com.grillo.model.Partner;
 
 @Repository
 public interface PartnerRepository extends PagingAndSortingRepository<Partner, Long> {
-    Optional<String> findByDocument(String document);
+
+    Optional<Partner> findByDocument(String document);
 }
