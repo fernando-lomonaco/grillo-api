@@ -61,14 +61,14 @@ public class ProductController {
     @ApiResponse(responseCode = "200", description = "Case the search has been succeeded")
     @ApiResponse(responseCode = "404", description = "Case the search has been failed")
     @GetMapping("/byCategory/{category}")
-    public ResponseEntity<Response<PagedModel<ProductDTO>>> findByCategory(
+    public ResponseEntity<Response<PagedModel<ProductDTO>>> findAllByCategory(
             @PathVariable("category") Long categoryCode,
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "20", required = false) int size) {
 
         Response<PagedModel<ProductDTO>> response = new Response<>();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<Product> products = service.findByCategory(categoryCode, pageable);
+        Page<Product> products = service.findAllByCategory(categoryCode, pageable);
         if (products.isEmpty()) {
             throw new EntityNotFoundException("There are no products registered with the category=" + categoryCode);
         }

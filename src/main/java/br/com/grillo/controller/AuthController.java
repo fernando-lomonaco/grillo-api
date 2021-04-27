@@ -5,7 +5,6 @@ import br.com.grillo.dto.resource.AuthModelAssembler;
 import br.com.grillo.dto.response.Response;
 import br.com.grillo.dto.security.JwtResponseDTO;
 import br.com.grillo.dto.security.LoginDTO;
-import br.com.grillo.model.Auth;
 import br.com.grillo.service.UserService;
 import br.com.grillo.util.security.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -74,7 +73,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        final Auth auth = authDTO.convertDTOToEntity();
+        final var auth = authDTO.convertDTOToEntity();
         AuthDTO model = assembler.toModel(service.save(auth));
         response.setData(model);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
