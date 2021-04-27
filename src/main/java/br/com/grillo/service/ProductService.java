@@ -10,7 +10,7 @@ public interface ProductService {
 
     Page<Product> all(Pageable pageable);
 
-    Page<Product> findByCategory(Long categoryCode, Pageable pageable);
+    Page<Product> findAllByCategory(Long categoryCode, Pageable pageable);
 
     Product save(Product product);
 

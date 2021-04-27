@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Cacheable(value = "products", key = "#categoryCode.toString().concat('-').concat(#pageable.getPageNumber().toString())", unless = "#result==null or #result.isEmpty()")
-    public Page<Product> findByCategory(Long categoryCode, Pageable pageable) {
+    public Page<Product> findAllByCategory(Long categoryCode, Pageable pageable) {
         return repository.findByCategoryCode(categoryCode, pageable);
     }
 

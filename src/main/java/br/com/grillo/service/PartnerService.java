@@ -14,9 +14,9 @@ public interface PartnerService {
 
     Optional<Partner> get(Long code);
 
-    Partner update(Partner partner, Long code);
+    Optional<Partner> findByDocument(String document);
 
-    Optional<String> findByDocument(String cnpj);
+    Partner update(Partner partner, Long code);
 
     void delete(Long code);
 }
