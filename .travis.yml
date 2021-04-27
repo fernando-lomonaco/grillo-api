@@ -16,8 +16,8 @@ stages:
 - name: Uni Tests
 - name: Static Analysis
 - name: Build Docker Image
-- name: Set Tag
 - name: Deploy
+- name: Set Tag
 before_install:
 - chmod +x mvnw
 jobs:
@@ -47,20 +47,6 @@ jobs:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker pull adoptopenjdk/openjdk11:alpine-jre
     - "./mvnw deploy jib:build -P deploy-docker -DskipTests"
-  - stage: Set Tag
-    if: branch = main
-    before_deploy:
-      # Set up git user name and tag this commit
-      - git config --local user.name "fernando-lomonaco"
-      - git config --local user.email "fernando_lomonaco@outlook.com"
-      - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
-      - echo "##################### Setting tag $TRAVIS_TAG"
-      - git tag $TRAVIS_TAG
-    deploy:
-      provider: releases
-      api_key:
-        secure: DTsK886/nRjAFa2p0xae6XylpNKrzy8lharRJxxzzmTTt8V05v44/0hRRp/oJp2ggAUWWzx4wyq67Yo8qxOHL9Lxfhq8k3aI0qT6uoqx6Px3tqNlGiL0ZcJCWQm6gEHBErJhtBNn8FOC98OSgCC/aGVUhbgXTWTRkXxtlr9Q979MXi7dB95NWGC8k0sAVOhQdlmD1LPjnEAhfoBTRkESHVrLXgS42HlOdbeyfSBw4hETNuR422z695JGTiOYRkXf7mqRgyc2AHLh4YZqU1jSVzo8FdOVgcfYnPiKku0C3NqPs3RXVosSN5tc5ZO/9mKuwHei3HS8/kIe/vj/8W+oF4TMaQja2fVCMnw94ZIu0hrqcpAHfZfg5TFx3pviyCIZNVd805U23jUiLoGEvPmztQ5FlNEImnSer1I86KiUy5yrlNKDg4EWPyk6gzL0ylT/uCtkxFgOzo2+qjeZn/rZOEFwpUZRQZMWCjuxYmc1iLy+9v0h8SFzHmvDNTsejra7XlYOMnqHlEOOi7u8dFDelVCtd43BpskI8DizBYWU/2j1itzggaMXtDO+yAZMCFjG5tOJXiI4u2VQjKTR3mRciP2TdhTONuWYyABYMWVKP6gyJ1VNWZWGz7/EgQZ0+djKH5KWzIM0pqTm40ljhHhYUxtnKfS7Kl29w/O6UgKkKEc=
-      skip_cleanup: true
   - stage: Deploy
     if: branch = main
     script:
@@ -71,6 +57,20 @@ jobs:
         secure: my9WwA1y8GMLR/L1RqR1/+PTtdpbH7PENI14Ba/PXC6pLY3NccWtXNZhIolQs27f1CWw4vTpTPu2Gcd68jQatR17dNV7yZYs9O2sXHOGl/MyKIOYo5goywhWzQ3Jpo83n0akOb7raJwlXQwQeMUIfiiHLWbDvVh9+bE6QCDi9qk7YD5brj+ZczyqTsjwJDKAeujfMnwHV8zDU7mHWD8EPwTmIa2YDtIun3bxVh0yvTyPjHCIEyUwCjQhKxXT/vLw55qcdO5e3r+wXQDmtOPlGSGX4cWF43rStxJowFNJh6Uhi/WpUDhzHBIU+VBD/vpOCO+5u944o+GsSKoIj92NuZ6GEbb6VhGEA0q88398r9PMx6l+IoNxaew/u1Ry8y7rNSNlr1xPTt86faYnLcYQeyPvMrbGTiwVsa/VPPAOTf50p6O1XSppGFUGqsJmKKkxBSXTzMxFAeXC0i+8T8gyGM/IPBoGpjc6ciOxzkaGTV7vbxpbsjsNHEoTrI4SxpYaF7/A8j5JS7ZATwbsMF9dfCBB7KeL8tfEJRHmmsAxnJq5tMLgbuOfooPxZlXdZxcfZOIEiO9Vik5Duo6TuGtbVU0kHg3bxkh1+Ac0C9KwERfcNtQwKeVv6n5bwWPQB0taxdoIbOXgpfO+7EN2ifJe/JFnZTmwoS2+dgi5Vg+KUEs=
       app: grillo-api
       edge: true
+      on:
+        branch: main
+  - stage: Set Tag
+    if: branch = main
+    script:
+      - echo "##################### TAG"
+    before_deploy: source script.sh
+    deploy:
+      provider: releases
+      api_key:
+        secure: DTsK886/nRjAFa2p0xae6XylpNKrzy8lharRJxxzzmTTt8V05v44/0hRRp/oJp2ggAUWWzx4wyq67Yo8qxOHL9Lxfhq8k3aI0qT6uoqx6Px3tqNlGiL0ZcJCWQm6gEHBErJhtBNn8FOC98OSgCC/aGVUhbgXTWTRkXxtlr9Q979MXi7dB95NWGC8k0sAVOhQdlmD1LPjnEAhfoBTRkESHVrLXgS42HlOdbeyfSBw4hETNuR422z695JGTiOYRkXf7mqRgyc2AHLh4YZqU1jSVzo8FdOVgcfYnPiKku0C3NqPs3RXVosSN5tc5ZO/9mKuwHei3HS8/kIe/vj/8W+oF4TMaQja2fVCMnw94ZIu0hrqcpAHfZfg5TFx3pviyCIZNVd805U23jUiLoGEvPmztQ5FlNEImnSer1I86KiUy5yrlNKDg4EWPyk6gzL0ylT/uCtkxFgOzo2+qjeZn/rZOEFwpUZRQZMWCjuxYmc1iLy+9v0h8SFzHmvDNTsejra7XlYOMnqHlEOOi7u8dFDelVCtd43BpskI8DizBYWU/2j1itzggaMXtDO+yAZMCFjG5tOJXiI4u2VQjKTR3mRciP2TdhTONuWYyABYMWVKP6gyJ1VNWZWGz7/EgQZ0+djKH5KWzIM0pqTm40ljhHhYUxtnKfS7Kl29w/O6UgKkKEc=
+      file: $PLUGIN_JAR_PATH
+      draft: true
+      cleanup: true
       on:
         branch: main
 notifications:
