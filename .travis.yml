@@ -66,8 +66,7 @@ jobs:
     before_deploy: source script.sh
     deploy:
       provider: releases
-      api_key:
-        secure: DTsK886/nRjAFa2p0xae6XylpNKrzy8lharRJxxzzmTTt8V05v44/0hRRp/oJp2ggAUWWzx4wyq67Yo8qxOHL9Lxfhq8k3aI0qT6uoqx6Px3tqNlGiL0ZcJCWQm6gEHBErJhtBNn8FOC98OSgCC/aGVUhbgXTWTRkXxtlr9Q979MXi7dB95NWGC8k0sAVOhQdlmD1LPjnEAhfoBTRkESHVrLXgS42HlOdbeyfSBw4hETNuR422z695JGTiOYRkXf7mqRgyc2AHLh4YZqU1jSVzo8FdOVgcfYnPiKku0C3NqPs3RXVosSN5tc5ZO/9mKuwHei3HS8/kIe/vj/8W+oF4TMaQja2fVCMnw94ZIu0hrqcpAHfZfg5TFx3pviyCIZNVd805U23jUiLoGEvPmztQ5FlNEImnSer1I86KiUy5yrlNKDg4EWPyk6gzL0ylT/uCtkxFgOzo2+qjeZn/rZOEFwpUZRQZMWCjuxYmc1iLy+9v0h8SFzHmvDNTsejra7XlYOMnqHlEOOi7u8dFDelVCtd43BpskI8DizBYWU/2j1itzggaMXtDO+yAZMCFjG5tOJXiI4u2VQjKTR3mRciP2TdhTONuWYyABYMWVKP6gyJ1VNWZWGz7/EgQZ0+djKH5KWzIM0pqTm40ljhHhYUxtnKfS7Kl29w/O6UgKkKEc=
+      token: $GITHUB_TOKEN
       file: $PLUGIN_JAR_PATH
       draft: true
       cleanup: true
