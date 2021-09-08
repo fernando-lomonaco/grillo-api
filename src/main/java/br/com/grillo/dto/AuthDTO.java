@@ -19,7 +19,7 @@ public class AuthDTO extends RepresentationModel<AuthDTO> {
 
     @Getter
     @NotNull(message = "Deve-se atribuir um login.")
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 20, message = "Nome deve ter entre 3 a 20 caracteres.")
     private String username;
 
     @Getter

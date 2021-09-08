@@ -2,7 +2,6 @@ package br.com.grillo.dto.resource;
 
 import br.com.grillo.controller.AuthController;
 import br.com.grillo.dto.AuthDTO;
-import br.com.grillo.dto.CategoryDTO;
 import br.com.grillo.model.Auth;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
