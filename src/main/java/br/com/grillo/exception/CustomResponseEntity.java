@@ -25,6 +25,14 @@ public class CustomResponseEntity extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
     }
 
+    @ExceptionHandler(ConnectException.class)
+    protected ResponseEntity<Object> handleCustomConnectException(final Exception ex, final WebRequest request) {
+
+        final ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE.value(),
+                HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(), LocalDateTime.now(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exceptionResponse);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
                                                                   final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
