@@ -8,7 +8,7 @@ services:
 - docker
 addons:
   sonarcloud:
-    organization: grillo-api
+    organization: "ves6da-m5f"
     token:
       secure: e4lBUlGak6y7L+mYYIH9VvdulpjPWXmmx+RS17vEKwmjRr+kzKbdZEgkXU3QxNg7X2R2CyQ1UCr45wqRnJandkvW0jhg9EmwvLQsK3/V2DeJIyMHF7mpxNJPrG8YiOJXcIFkM2yBIfhshCfWGfeO8hlX+N0AAAIiPrPtzRU5I+9R0LXAGSAXJwYTmLM6yjNYB3ZZIvq4qi+F5O/kkGS+PxoWWE3+djNrVO6SZh6/D61WridwEnSrsbg/aacdJyo57vNvPW5AT2fwpy2xg6GtCVw1LDPZ8Y7JDub12F/UQnTKXTXZh3OYb17LuY62jTUpc8LGyaQJjGxIsmMluUMYAROiDVVaElU8ROSfEb5HxCnlu6Ogn2qqsmXCNVDMdTpvRqaAxeyrfxUm5LU3fngwEasivNB8D38UaNNzAPQJLc4aycp74T4brTBrwFBLzePv9/4kMyQ+se4LNNyDuCP0+KYjhBmlZZDRRcjuPnNtIa9wtRSZx80ignu0DBlKv4lftZfOyKkBd6S2sOXVgIE3oaJmb9I8ICbTpz8XUWx1xkGTkOZR0REUGExYAGRWFBRPu9zly+53kaXGamGmQS8wNhpor5b5mGczqU9B0WtWl0QE07f39FbHySPjYUNN1SI34jiYjw/vAtORGpzNQTSPqOQqRl28erhrcw9jKbKIJL4=
 stages:
