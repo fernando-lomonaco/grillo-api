@@ -40,10 +40,10 @@ jobs:
     - "./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
       -Dsonar.projectKey=fernando-lomonaco_grillo-api"
   - stage: Create tag
-    script: echo "Deploying to GitHub releases ..."
+    script: echo "##################### Creating TAG"
     deploy:
       provider: releases
-      api_key: $GITHUB_OAUTH_TOKEN
+      api_key: $GITHUB_TOKEN
       skip_cleanup: true
       on:
         tags: true
